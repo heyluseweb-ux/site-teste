@@ -150,7 +150,7 @@
 
   function promoMedia(p) {
     const f = photosOf(p)[0];
-    const pic = f ? `<span class="ph"><img class="hero__bg" src="${esc(window.PPData.foto(f))}" alt=""><img class="hero__fg" src="${esc(window.PPData.foto(f))}" alt="${esc(p.nome)}"></span>` : ph(p.categoria, { dark: true, label: '' });
+    const pic = f ? `<span class="ph"><img src="${esc(window.PPData.foto(f))}" alt="${esc(p.nome)}" draggable="false"></span>` : ph(p.categoria, { dark: true, label: '' });
     return `${pic}<span class="hero__price"><s>${brl(p.precoDe)}</s><strong>${brl(p.preco)}</strong></span>`;
   }
 
@@ -176,7 +176,7 @@
             <p class="hero__text">${esc(b.texto)}</p>
             <a class="btn btn--gold" href="${b.link}" ${i ? 'tabindex="-1"' : ''}>${esc(b.botao)} ${ARROW}</a>
           </div>
-          <div class="hero__media ${b.produto ? 'hero__media--produto' : ''}">${b.produto ? promoMedia(b.produto) : b.imagem ? `<span class="ph"><img src="${esc(b.imagem)}" alt=""></span>` : ph(['camisetas', 'tenis', 'moletons-e-jaquetas'][i % 3], { dark: true, label: 'Imagem do banner' })}</div>
+          <div class="hero__media ${b.produto ? 'hero__media--produto' : ''}">${b.produto ? promoMedia(b.produto) : b.imagem ? `<span class="ph"><img src="${esc(b.imagem)}" alt="" draggable="false"></span>` : ph(['camisetas', 'tenis', 'moletons-e-jaquetas'][i % 3], { dark: true, label: 'Imagem do banner' })}</div>
         </div>`).join('')}
       </div>
       <div class="hero__ctrl">
@@ -636,17 +636,55 @@
   }
 
   /* ---------- banner ---------- */
+  const HERO_MS = 7000;   // tempo de cada banner
+  let heroAtual = 0;
   function heroGo(i) {
-    const slides = $$('.hero__slide'); if (!slides.length) return;
+    const track = $('.hero__slides'), slides = $$('.hero__slide'); if (!track || !slides.length) return;
     const n = (i + slides.length) % slides.length;
+    heroAtual = n;
+    track.style.transform = `translateX(${-n * 100}%)`;
     slides.forEach((s, k) => { s.classList.toggle('is-active', k === n); s.setAttribute('aria-hidden', k !== n); s.querySelectorAll('a').forEach(a => a.tabIndex = k === n ? 0 : -1); });
     $$('[data-hero-go]').forEach((d, k) => d.setAttribute('aria-current', k === n));
   }
-  const heroIndex = () => $$('.hero__slide').findIndex(s => s.classList.contains('is-active'));
+  const heroIndex = () => heroAtual;
+  function heroTimerStart() {
+    clearInterval(heroTimer);
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches || $$('.hero__slide').length < 2) return;
+    heroTimer = setInterval(() => heroGo(heroAtual + 1), HERO_MS);
+  }
   function startHero() {
-    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    clearInterval(heroTimer); heroTimer = setInterval(() => heroGo(heroIndex() + 1), 6000);
-    const h = $('.hero'); h.addEventListener('mouseenter', () => clearInterval(heroTimer)); h.addEventListener('mouseleave', startHero); h.addEventListener('focusin', () => clearInterval(heroTimer));
+    const h = $('.hero'), track = $('.hero__slides'); if (!h || !track) return;
+    heroAtual = 0; heroGo(0); heroTimerStart();
+    h.addEventListener('mouseenter', () => clearInterval(heroTimer));
+    h.addEventListener('mouseleave', heroTimerStart);
+    h.addEventListener('focusin', () => clearInterval(heroTimer));
+    // arrastar com o dedo ou o mouse
+    let x0 = 0, y0 = 0, dx = 0, arrastando = false, decidido = false, moveu = false;
+    const fim = () => {
+      window.removeEventListener('pointermove', mover); window.removeEventListener('pointerup', fim); window.removeEventListener('pointercancel', fim);
+      if (!arrastando) return;
+      arrastando = false; track.classList.remove('is-dragging');
+      const limite = Math.min(80, track.clientWidth * 0.15);
+      heroGo(dx < -limite ? heroAtual + 1 : dx > limite ? heroAtual - 1 : heroAtual);
+      heroTimerStart();
+    };
+    const mover = e => {
+      dx = e.clientX - x0; const dy = e.clientY - y0;
+      if (!decidido) {
+        if (Math.abs(dx) < 6 && Math.abs(dy) < 6) return;
+        decidido = true;
+        if (Math.abs(dy) > Math.abs(dx)) { fim(); return; }   // rolagem vertical: deixa a página rolar
+        arrastando = true; moveu = true; clearInterval(heroTimer); track.classList.add('is-dragging');
+      }
+      if (arrastando) { e.preventDefault(); track.style.transform = `translateX(calc(${-heroAtual * 100}% + ${dx}px))`; }
+    };
+    track.addEventListener('pointerdown', e => {
+      if (e.pointerType === 'mouse' && e.button !== 0) return;
+      x0 = e.clientX; y0 = e.clientY; dx = 0; decidido = false; arrastando = false; moveu = false;
+      window.addEventListener('pointermove', mover, { passive: false }); window.addEventListener('pointerup', fim); window.addEventListener('pointercancel', fim);
+    });
+    track.addEventListener('dragstart', e => e.preventDefault());
+    track.addEventListener('click', e => { if (moveu) { e.preventDefault(); e.stopPropagation(); moveu = false; } }, true);   // arrasto não vira clique
   }
 
   /* ---------- vitrines ---------- */
@@ -718,8 +756,8 @@
     if ('close' in d) { closeDrawer($('.drawer.is-open'), t.tagName === 'BUTTON'); return; }
     if ('toggleSearch' in d) { searchForm.classList.toggle('is-open'); if (searchForm.classList.contains('is-open')) searchInput.focus(); return; }
     if (d.rail) { const tr = t.parentElement.querySelector('.rail__track'); tr.scrollBy({ left: +d.rail * tr.clientWidth * 0.9, behavior: 'smooth' }); return; }
-    if (d.hero) { heroGo(heroIndex() + +d.hero); clearInterval(heroTimer); return; }
-    if (d.heroGo) { heroGo(+d.heroGo); clearInterval(heroTimer); return; }
+    if (d.hero) { heroGo(heroIndex() + +d.hero); heroTimerStart(); return; }
+    if (d.heroGo) { heroGo(+d.heroGo); heroTimerStart(); return; }
     if (d.remove) { cart = cart.filter(i => i.key !== d.remove); saveCart(); return; }
     if (d.lineQty) { const it = cart.find(i => i.key === d.key); it.qtd = Math.max(1, Math.min(10, it.qtd + +d.lineQty)); saveCart(); return; }
     if ('more' in d) { F.shown += L.produtosPorPagina; renderResults(); return; }

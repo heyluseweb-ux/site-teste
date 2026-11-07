@@ -146,9 +146,10 @@ svg { fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round
 
 /* ---------- banner principal ---------- */
 .hero { position: relative; background: var(--black); color: var(--white); overflow: hidden; }
-.hero__slides { display: grid; }
-.hero__slide { grid-area: 1 / 1; display: grid; grid-template-columns: 1fr 1fr; min-height: clamp(420px, 42vw, 600px); opacity: 0; visibility: hidden; transition: opacity .7s, visibility 0s .7s; }
-.hero__slide.is-active { opacity: 1; visibility: visible; transition: opacity .7s; }
+.hero__slides { display: flex; transition: transform .65s var(--ease); touch-action: pan-y; cursor: grab; user-select: none; -webkit-user-select: none; }
+.hero__slides.is-dragging { transition: none; cursor: grabbing; }
+.hero__slide { flex: 0 0 100%; min-width: 0; display: grid; grid-template-columns: 1fr 1fr; min-height: clamp(420px, 42vw, 600px); }
+.hero__slide a, .hero__slide img { -webkit-user-drag: none; }
 .hero__copy { display: flex; flex-direction: column; justify-content: center; gap: 18px; padding: 56px var(--gut) 72px max(var(--gut), calc((100vw - var(--maxw)) / 2)); }
 .hero__eyebrow { font: 800 16px/1 var(--display); letter-spacing: .2em; text-transform: uppercase; color: var(--gold); }
 .hero__title { font-size: clamp(56px, 7.4vw, 120px); font-weight: 900; line-height: .86; }
@@ -174,9 +175,6 @@ svg { fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round
 }
 
 /* slide de oferta no banner: foto inteira sobre a própria foto desfocada, preço no canto */
-.hero__media--produto .ph { background: #1b1a18; }
-.hero__media--produto .hero__bg { object-fit: cover; filter: blur(28px) brightness(.55); transform: scale(1.15); }
-.hero__media--produto .hero__fg { object-fit: contain; }
 .hero__price { position: absolute; right: 20px; bottom: 20px; z-index: 1; display: grid; gap: 2px; padding: 12px 16px; background: var(--sale); color: var(--white); text-align: right; }
 .hero__price s { font-size: 13px; opacity: .85; }
 .hero__price strong { font: 900 30px/1 var(--display); }

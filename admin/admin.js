@@ -91,9 +91,8 @@
     const r = img.width / img.height;
     if (r <= W / H) {             // mais alta: corta em cima e embaixo
       const h = img.width * H / W; ctx.drawImage(img, 0, (img.height - h) / 2, img.width, h, 0, 0, W, H);
-    } else {                      // mais larga: foto inteira no meio, sobra preenchida com a própria foto desfocada
-      const bw = H * r; ctx.filter = 'blur(32px)'; ctx.drawImage(img, (W - bw) / 2, 0, bw, H); ctx.filter = 'none';
-      const fh = W / r; ctx.drawImage(img, 0, (H - fh) / 2, W, fh);
+    } else {                      // mais larga: zoom no centro, corta os lados
+      const w = img.height * W / H; ctx.drawImage(img, (img.width - w) / 2, 0, w, img.height, 0, 0, W, H);
     }
     const blob = await new Promise(ok => c.toBlob(ok, 'image/webp', 0.82));
     if (blob && blob.type === 'image/webp') return blob;
