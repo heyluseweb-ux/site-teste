@@ -49,9 +49,21 @@
   };
   const ph = (cat, { label = 'Foto', dark = false, cls = '' } = {}) =>
     `<span class="ph ${dark ? 'ph--dark' : ''} ${cls}" data-label="${esc(label)}"><svg viewBox="0 0 64 64" aria-hidden="true">${GLYPH[cat] || GLYPH.camisetas}</svg></span>`;
-  const media = (p, i = 0, opts = {}) => (p.fotos && p.fotos[i])
-    ? `<span class="ph ${opts.cls || ''}"><img src="${esc(p.fotos[i])}" alt="${esc(p.nome)}" loading="lazy"></span>`
-    : ph(p.categoria, opts);
+  /* fotos da cor (cores[i].fotos) ou da peça (fotos); sem fotos, o espaço reservado */
+  const photosOf = (p, cor = 0) => (p.cores[cor] && p.cores[cor].fotos) || p.fotos || [];
+  const hasPhoto = p => photosOf(p).length > 0;
+  const photoFirst = (a, b) => hasPhoto(b) - hasPhoto(a);
+  const corIdx = (p, nome) => Math.max(0, p.cores.findIndex(c => c.nome === nome));
+  const media = (p, i = 0, opts = {}, cor = 0) => {
+    const f = photosOf(p, cor)[i];
+    return f ? `<span class="ph ${opts.cls || ''}"><img src="${esc(f)}" alt="${esc(p.nome)}${p.cores[cor] ? ' – ' + esc(p.cores[cor].nome) : ''}" loading="lazy"></span>` : ph(p.categoria, opts);
+  };
+  function galleryHTML(p, cor) {
+    const has = photosOf(p, cor).length > 0;
+    const n = photosOf(p, cor).length || 4;
+    const thumbs = n > 1 ? `<div class="gallery__thumbs">${Array.from({ length: n }, (_, i) => `<button type="button" data-thumb="${i}" aria-label="Ver foto ${i + 1}" aria-current="${i === 0}">${media(p, i, { label: '' }, cor)}</button>`).join('')}</div>` : '';
+    return `${thumbs}<div class="gallery__main" data-main>${media(p, 0, { label: has ? '' : `Foto 1 de ${n}` }, cor)}</div>`;
+  }
 
   /* ---------- estado: carrinho e favoritos ---------- */
   let cart = store.get('carrinho', []).filter(i => byId(i.id));
@@ -127,10 +139,10 @@
   /* ---------- página inicial ---------- */
   function viewHome() {
     const banners = L.banners.map(b => ({ ...b, destaque: b.destaque.replace('{maxDesconto}', maxOff) }));
-    const novos = P.filter(p => p.novo).slice(0, 12);
-    const top = P.filter(p => p.maisVendido).slice(0, 12);
+    const novos = P.filter(p => p.novo).sort(photoFirst).slice(0, 12);
+    const top = P.filter(p => p.maisVendido).sort(photoFirst).slice(0, 12);
     const sale = P.filter(p => p.precoDe).sort((a, b) => off(b) - off(a)).slice(0, 12);
-    const mosaic = [['camisas-de-time', 'Camisas de time', 'Seleção e retrô'], ['moletons-e-jaquetas', 'Moletons e jaquetas', 'Para os dias frios'], ['bones', 'Bonés', 'Aba curva, reta e bucket'], ['bermudas-e-shorts', 'Bermudas', 'Sarja, jeans e cargo']];
+    const mosaic = [['camisas-de-time', 'Camisas de time', 'Seleção e retrô'], ['moletons-e-jaquetas', 'Moletons e jaquetas', 'Para os dias frios', 'assets/img/categorias/jaquetas.webp'], ['bones', 'Bonés', 'Aba curva, reta e bucket', 'assets/img/categorias/bones.webp'], ['bermudas-e-shorts', 'Bermudas', 'Sarja, jeans e cargo']];
     return `
     <section class="hero" aria-roledescription="carrossel" aria-label="Destaques">
       <div class="hero__slides">${banners.map((b, i) => `
@@ -154,7 +166,7 @@
     <section class="hot"><div class="container">
       <div class="section-head"><div><h2>Em alta</h2><p>Os mais procurados da loja nesta semana.</p></div></div>
       <div class="hot__grid">
-        ${[['camisetas', 'Camisetas', '#/loja/camisetas', 'assets/img/categorias/camisetas.webp'], ['tenis', 'Tênis', '#/loja/tenis'], ['camisetas', 'Plus size', '#/loja/plus-size']].map(([g, t, h, img]) => `
+        ${[['camisetas', 'Camisetas', '#/loja/camisetas', 'assets/img/categorias/camisetas.webp'], ['tenis', 'Tênis', '#/loja/tenis', 'assets/img/produtos/tenis-air-max-plus-preto-azul.webp'], ['camisetas', 'Plus size', '#/loja/plus-size']].map(([g, t, h, img]) => `
           <a class="hot__card ${img ? 'hot__card--photo' : ''}" href="${h}">${img ? `<span class="ph"><img src="${img}" alt="" loading="lazy"></span>` : ph(g, { label: '' })}<span class="hot__label"><strong>${t}</strong><span>Comprar</span></span></a>`).join('')}
       </div>
     </div></section>
@@ -163,7 +175,7 @@
 
     <section class="section section--tight"><div class="container">
       <div class="section-head"><div><h2>Compre por categoria</h2></div><a class="link-arrow" href="#/loja/todos">Todos os produtos ${ARROW}</a></div>
-      <div class="mosaic">${mosaic.map(([s, t, sub]) => `<a href="#/loja/${s}">${ph(s, { label: '' })}<span class="mosaic__label"><strong>${t}</strong><span>${sub}</span></span></a>`).join('')}</div>
+      <div class="mosaic">${mosaic.map(([s, t, sub, img]) => `<a href="#/loja/${s}" ${img ? 'class="mosaic__photo"' : ''}>${img ? `<span class="ph"><img src="${img}" alt="" loading="lazy"></span>` : ph(s, { label: '' })}<span class="mosaic__label"><strong>${t}</strong><span>${sub}</span></span></a>`).join('')}</div>
     </div></section>
 
     ${rail('Mais vendidos', top, '#/loja/todos')}
@@ -263,7 +275,7 @@
       (!F.origem.size || F.origem.has(p.origem)) &&
       (!F.promo || p.precoDe) &&
       (F.min === '' || p.preco >= +F.min) && (F.max === '' || p.preco <= +F.max));
-    const s = { menor: (a, b) => a.preco - b.preco, maior: (a, b) => b.preco - a.preco, desconto: (a, b) => off(b) - off(a), az: (a, b) => a.nome.localeCompare(b.nome, 'pt-BR'), novos: (a, b) => b.novo - a.novo, relevancia: (a, b) => (b.maisVendido + b.novo) - (a.maisVendido + a.novo) }[F.sort];
+    const s = { menor: (a, b) => a.preco - b.preco, maior: (a, b) => b.preco - a.preco, desconto: (a, b) => off(b) - off(a), az: (a, b) => a.nome.localeCompare(b.nome, 'pt-BR'), novos: (a, b) => b.novo - a.novo, relevancia: (a, b) => (b.maisVendido + b.novo + 3 * hasPhoto(b)) - (a.maisVendido + a.novo + 3 * hasPhoto(a)) }[F.sort];
     return [...l].sort(s);
   }
   function renderResults() {
@@ -303,10 +315,7 @@
     return `<div class="container">
       ${crumbs([[catName(p.categoria), catLink], [p.nome]])}
       <div class="pdp">
-        <div class="gallery">
-          <div class="gallery__thumbs">${[0, 1, 2, 3].map(i => `<button type="button" data-thumb="${i}" aria-label="Ver foto ${i + 1}" aria-current="${i === 0}">${media(p, i, { label: '' })}</button>`).join('')}</div>
-          <div class="gallery__main" data-main>${media(p, 0, { label: 'Foto 1 de 4' })}</div>
-        </div>
+        <div class="gallery ${photosOf(p, 0).length === 1 ? 'gallery--single' : ''}" data-gallery>${galleryHTML(p, 0)}</div>
         <div class="pdp__info">
           <div><p class="pdp__ref">Ref. ${p.sku} · ${p.origem}</p></div>
           <h1 class="pdp__title">${esc(p.nome)}</h1>
@@ -377,7 +386,7 @@
     const falta = L.freteGratisAcima - sub;
     body.innerHTML = cart.map(i => { const p = byId(i.id); return `
       <div class="line-item">
-        <a href="#/produto/${p.slug}" data-close>${media(p, 0, { label: '' })}</a>
+        <a href="#/produto/${p.slug}" data-close>${media(p, 0, { label: '' }, corIdx(p, i.cor))}</a>
         <div>
           <div class="line-item__top"><div><a class="line-item__name" href="#/produto/${p.slug}" data-close>${esc(p.nome)}</a><p class="line-item__meta">${esc(i.cor)} · Tam. ${esc(i.tam)}</p></div>
             <button class="line-item__remove" type="button" data-remove="${esc(i.key)}" aria-label="Remover ${esc(p.nome)}">${TRASH}</button></div>
@@ -439,7 +448,7 @@
         </div>
         <aside class="summary" aria-label="Resumo do pedido">
           <h2>Resumo do pedido</h2>
-          <div class="summary__items">${cart.map(i => { const p = byId(i.id); return `<div class="summary__item">${media(p, 0, { label: '' })}<span>${esc(p.nome)}<small>${esc(i.cor)} · Tam. ${esc(i.tam)} · ${i.qtd} un.</small></span><b>${brl(p.preco * i.qtd)}</b></div>`; }).join('')}</div>
+          <div class="summary__items">${cart.map(i => { const p = byId(i.id); return `<div class="summary__item">${media(p, 0, { label: '' }, corIdx(p, i.cor))}<span>${esc(p.nome)}<small>${esc(i.cor)} · Tam. ${esc(i.tam)} · ${i.qtd} un.</small></span><b>${brl(p.preco * i.qtd)}</b></div>`; }).join('')}</div>
           <div class="totals" data-co-totals></div>
           <button class="btn btn--gold btn--block" type="submit">Finalizar pedido ${ARROW}</button>
           <p class="field__hint">Ao finalizar, você concorda com a <a class="link" href="#/pagina/privacidade">política de privacidade</a> e as <a class="link" href="#/pagina/trocas">regras de troca</a>.</p>
@@ -698,8 +707,14 @@
     }
     if ('filtersOpen' in d) { $('.filters').classList.add('is-open'); $('[data-overlay]').hidden = false; document.body.style.overflow = 'hidden'; return; }
     if ('filtersClose' in d) { $('.filters').classList.remove('is-open'); if (!$('.drawer.is-open')) { $('[data-overlay]').hidden = true; document.body.style.overflow = ''; } return; }
-    if (d.thumb && PD) { PD.foto = +d.thumb; $('[data-main]').innerHTML = media(PD.p, PD.foto, { label: `Foto ${PD.foto + 1} de 4` }); $$('[data-thumb]').forEach(b => b.setAttribute('aria-current', b === t)); return; }
-    if (d.color && PD) { PD.cor = +d.color; $$('[data-color]').forEach(b => b.setAttribute('aria-pressed', b === t)); $('[data-color-name]').textContent = PD.p.cores[PD.cor].nome; return; }
+    if (d.thumb && PD) { PD.foto = +d.thumb; const n = photosOf(PD.p, PD.cor).length; $('[data-main]').innerHTML = media(PD.p, PD.foto, { label: n ? '' : `Foto ${PD.foto + 1} de 4` }, PD.cor); $$('[data-thumb]').forEach(b => b.setAttribute('aria-current', b === t)); return; }
+    if (d.color && PD) {
+      const changed = photosOf(PD.p, +d.color) !== photosOf(PD.p, PD.cor);
+      PD.cor = +d.color; PD.foto = 0;
+      $$('[data-color]').forEach(b => b.setAttribute('aria-pressed', b === t)); $('[data-color-name]').textContent = PD.p.cores[PD.cor].nome;
+      if (changed) { const g = $('[data-gallery]'); g.innerHTML = galleryHTML(PD.p, PD.cor); g.classList.toggle('gallery--single', photosOf(PD.p, PD.cor).length === 1); }
+      return;
+    }
     if (d.size && PD && t.closest('.opt-sizes')) { PD.tam = d.size; $$('.opt-sizes [data-size]').forEach(b => b.setAttribute('aria-pressed', b === t)); const n = $('[data-size-name]'); if (n) n.textContent = d.size; $('[data-size-error]').hidden = true; return; }
     if (d.qty && PD) { const i = $('[data-qty-input]'); PD.qtd = Math.max(1, Math.min(10, PD.qtd + +d.qty)); i.value = PD.qtd; return; }
     if ('add' in d && PD) { pdAdd(false); return; }

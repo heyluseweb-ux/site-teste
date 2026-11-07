@@ -30,7 +30,9 @@ Para publicar, sirva a pasta como site estático (GitHub Pages, Netlify, Vercel 
 | `assets/js/products.js` | As 100 peças: nome, preço, preço antigo, cores, tamanhos, esgotados, fotos |
 | `assets/css/styles.css` | Cores, fontes e layout |
 
-**Fotos:** coloque os arquivos em `assets/img/produtos/` e adicione em cada peça `"fotos": ["assets/img/produtos/PP-001-1.webp", ...]` (até 4, formato 4:5, 1200x1500). Sem fotos, o site mostra o espaço reservado. Nos banners, preencha `imagem` em `config.js` (1920x720).
+**Fotos:** coloque os arquivos em `assets/img/produtos/` (formato 4:5, 1200x1500). Uma foto por cor: `"cores": [{"nome": "Branco", "hex": "#F7F7F5", "fotos": ["assets/img/produtos/x-branco.webp"]}]`, e a foto troca quando o cliente escolhe a cor. Fotos da peça inteira, iguais para todas as cores: `"fotos": [...]` no produto. Até 4 fotos por cor aparecem na galeria. Sem fotos, o site mostra o espaço reservado. Nos banners, preencha `imagem` em `config.js` (2400x1200, assunto no centro).
+
+**Peças com foto real hoje:** Camiseta Oversized Essential (branco e café), Polo Nike Piquet, Tênis Nike Air Max Plus (3 cores), Calça Chino Zara, Boné Louis Vuitton Monogram Jeans e Jaqueta Nike Corta-Vento. Os preços dessas peças são sugestões a confirmar.
 
 ## Antes de vender de verdade
 

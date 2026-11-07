@@ -8,8 +8,8 @@ window.PRODUTOS = [
    {"nome": "Branco", "hex": "#F7F7F5" },
    {"nome": "Verde-militar", "hex": "#4B5320" } ], "tamanhos": [ "P", "M", "G", "GG" ], "esgotados": [], "novo": false, "maisVendido": false, "descricao": "Modelagem pensada para o dia a dia, malha macia e acabamento reforçado na gola.", "composicao": "100% algodão" },
  { "id": "002", "sku": "PP-002", "slug": "camiseta-oversized-essential-002", "nome": "Camiseta Oversized Essential", "categoria": "camisetas", "linha": "adulto", "origem": "Nacional", "preco": 119.9, "precoDe": null, "cores": [
-   {"nome": "Bege", "hex": "#D8C7A6" },
-   {"nome": "Azul-marinho", "hex": "#1F2A44" } ], "tamanhos": [ "P", "M", "G", "GG" ], "esgotados": [ "G" ], "novo": false, "maisVendido": true, "descricao": "Modelagem pensada para o dia a dia, malha macia e acabamento reforçado na gola.", "composicao": "100% algodão" },
+   {"nome": "Branco", "hex": "#F7F7F5", "fotos": [ "assets/img/produtos/camiseta-oversized-branco.webp" ] },
+   {"nome": "Café", "hex": "#4A2C25", "fotos": [ "assets/img/produtos/camiseta-oversized-cafe.webp" ] } ], "tamanhos": [ "P", "M", "G", "GG" ], "esgotados": [], "novo": true, "maisVendido": true, "descricao": "Modelagem oversized com ombro caído e gola canelada. Malha encorpada que não deforma.", "composicao": "100% algodão" },
  { "id": "003", "sku": "PP-003", "slug": "camiseta-estampa-skyline-003", "nome": "Camiseta Estampa Skyline", "categoria": "camisetas", "linha": "adulto", "origem": "Importado", "preco": 139.9, "precoDe": null, "cores": [
    {"nome": "Bege", "hex": "#D8C7A6" },
    {"nome": "Cinza mescla", "hex": "#A9A9A6" },
@@ -94,10 +94,8 @@ window.PRODUTOS = [
    {"nome": "Preto", "hex": "#151515" },
    {"nome": "Azul-marinho", "hex": "#1F2A44" },
    {"nome": "Branco", "hex": "#F7F7F5" } ], "tamanhos": [ "P", "M", "G", "GG" ], "esgotados": [], "novo": false, "maisVendido": true, "descricao": "Corte moderno que vai do trabalho ao fim de semana, com botões resistentes e tecido leve.", "composicao": "100% algodão" },
- { "id": "032", "sku": "PP-032", "slug": "polo-piquet-classica-032", "nome": "Polo Piquet Clássica", "categoria": "polos", "linha": "adulto", "origem": "Importado", "preco": 129.9, "precoDe": null, "cores": [
-   {"nome": "Azul-marinho", "hex": "#1F2A44" },
-   {"nome": "Preto", "hex": "#151515" },
-   {"nome": "Bege", "hex": "#D8C7A6" } ], "tamanhos": [ "P", "M", "G", "GG" ], "esgotados": [], "novo": false, "maisVendido": false, "descricao": "Gola firme que não deforma e malha confortável para usar o dia todo.", "composicao": "100% algodão piquet" },
+ { "id": "032", "sku": "PP-032", "slug": "polo-nike-piquet-032", "nome": "Polo Nike Piquet", "categoria": "polos", "linha": "adulto", "origem": "Importado", "preco": 199.9, "precoDe": null, "cores": [
+   {"nome": "Vinho", "hex": "#6B1F2A", "fotos": [ "assets/img/produtos/polo-nike-vinho.webp" ] } ], "tamanhos": [ "P", "M", "G", "GG" ], "esgotados": [], "novo": false, "maisVendido": true, "descricao": "Polo em piquet com logo frontal, gola firme e dois botões.", "composicao": "100% algodão piquet" },
  { "id": "033", "sku": "PP-033", "slug": "polo-listrada-gola-contraste-033", "nome": "Polo Listrada Gola Contraste", "categoria": "polos", "linha": "adulto", "origem": "Nacional", "preco": 109.9, "precoDe": null, "cores": [
    {"nome": "Verde", "hex": "#16803C" },
    {"nome": "Bege", "hex": "#D8C7A6" } ], "tamanhos": [ "P", "M", "G", "GG" ], "esgotados": [ "G" ], "novo": false, "maisVendido": false, "descricao": "Gola firme que não deforma e malha confortável para usar o dia todo.", "composicao": "100% algodão piquet" },
@@ -157,10 +155,8 @@ window.PRODUTOS = [
    {"nome": "Bege", "hex": "#D8C7A6" },
    {"nome": "Grafite", "hex": "#4A4B4D" },
    {"nome": "Azul-marinho", "hex": "#1F2A44" } ], "tamanhos": [ "P", "M", "G", "GG" ], "esgotados": [ "P" ], "novo": false, "maisVendido": false, "descricao": "Proteção para os dias frios com caimento solto e acabamento de qualidade.", "composicao": "50% algodão, 50% poliéster" },
- { "id": "052", "sku": "PP-052", "slug": "jaqueta-corta-vento-052", "nome": "Jaqueta Corta-Vento", "categoria": "moletons-e-jaquetas", "linha": "adulto", "origem": "Importado", "preco": 299.9, "precoDe": 449.9, "cores": [
-   {"nome": "Azul-marinho", "hex": "#1F2A44" },
-   {"nome": "Cinza mescla", "hex": "#A9A9A6" },
-   {"nome": "Caramelo", "hex": "#A5672F" } ], "tamanhos": [ "P", "M", "G", "GG" ], "esgotados": [ "G" ], "novo": false, "maisVendido": false, "descricao": "Proteção para os dias frios com caimento solto e acabamento de qualidade.", "composicao": "50% algodão, 50% poliéster" },
+ { "id": "052", "sku": "PP-052", "slug": "jaqueta-nike-corta-vento-052", "nome": "Jaqueta Nike Corta-Vento", "categoria": "moletons-e-jaquetas", "linha": "adulto", "origem": "Importado", "preco": 599.9, "precoDe": null, "cores": [
+   {"nome": "Preto", "hex": "#151515", "fotos": [ "assets/img/produtos/jaqueta-nike-corta-vento-1.webp", "assets/img/produtos/jaqueta-nike-corta-vento-2.webp" ] } ], "tamanhos": [ "P", "M", "G", "GG" ], "esgotados": [], "novo": true, "maisVendido": true, "descricao": "Corta-vento com capuz ajustável, forro acolchoado e bolso com zíper no peito.", "composicao": "Externo 100% poliéster, forro acolchoado" },
  { "id": "053", "sku": "PP-053", "slug": "jaqueta-jeans-trucker-053", "nome": "Jaqueta Jeans Trucker", "categoria": "moletons-e-jaquetas", "linha": "adulto", "origem": "Nacional", "preco": 449.9, "precoDe": 719.9, "cores": [
    {"nome": "Verde-militar", "hex": "#4B5320" },
    {"nome": "Azul-marinho", "hex": "#1F2A44" },
@@ -219,10 +215,11 @@ window.PRODUTOS = [
    {"nome": "Preto", "hex": "#151515" },
    {"nome": "Jeans médio", "hex": "#4D6A8E" },
    {"nome": "Bege", "hex": "#D8C7A6" } ], "tamanhos": [ "38", "40", "42", "44", "46" ], "esgotados": [], "novo": true, "maisVendido": false, "descricao": "Caimento ajustado ao corpo sem apertar, tecido durável e fácil de combinar.", "composicao": "98% algodão, 2% elastano" },
- { "id": "072", "sku": "PP-072", "slug": "calca-chino-sarja-072", "nome": "Calça Chino Sarja", "categoria": "calcas", "linha": "adulto", "origem": "Importado", "preco": 189.9, "precoDe": 309.9, "cores": [
-   {"nome": "Verde-militar", "hex": "#4B5320" },
-   {"nome": "Preto", "hex": "#151515" },
-   {"nome": "Jeans médio", "hex": "#4D6A8E" } ], "tamanhos": [ "38", "40", "42", "44", "46" ], "esgotados": [], "novo": true, "maisVendido": true, "descricao": "Caimento ajustado ao corpo sem apertar, tecido durável e fácil de combinar.", "composicao": "98% algodão, 2% elastano" },
+ { "id": "072", "sku": "PP-072", "slug": "calca-chino-zara-072", "nome": "Calça Chino Zara", "categoria": "calcas", "linha": "adulto", "origem": "Importado", "preco": 259.9, "precoDe": null, "cores": [
+   {"nome": "Gelo", "hex": "#D9D6CC", "fotos": [ "assets/img/produtos/calca-chino-zara.webp" ] },
+   {"nome": "Bege", "hex": "#CDB79A", "fotos": [ "assets/img/produtos/calca-chino-zara.webp" ] },
+   {"nome": "Preto", "hex": "#151515", "fotos": [ "assets/img/produtos/calca-chino-zara.webp" ] },
+   {"nome": "Grafite", "hex": "#4A4B4D", "fotos": [ "assets/img/produtos/calca-chino-zara.webp" ] } ], "tamanhos": [ "38", "40", "42", "44", "46" ], "esgotados": [], "novo": true, "maisVendido": true, "descricao": "Calça chino de corte reto com bolsos faca. Fácil de combinar do trabalho ao fim de semana.", "composicao": "98% algodão, 2% elastano" },
  { "id": "073", "sku": "PP-073", "slug": "calca-jogger-moletom-073", "nome": "Calça Jogger Moletom", "categoria": "calcas", "linha": "adulto", "origem": "Importado", "preco": 209.9, "precoDe": 289.9, "cores": [
    {"nome": "Jeans médio", "hex": "#4D6A8E" },
    {"nome": "Preto", "hex": "#151515" } ], "tamanhos": [ "38", "40", "42", "44", "46" ], "esgotados": [], "novo": false, "maisVendido": true, "descricao": "Caimento ajustado ao corpo sem apertar, tecido durável e fácil de combinar.", "composicao": "98% algodão, 2% elastano" },
@@ -236,8 +233,10 @@ window.PRODUTOS = [
    {"nome": "Jeans médio", "hex": "#4D6A8E" },
    {"nome": "Preto", "hex": "#151515" },
    {"nome": "Grafite", "hex": "#4A4B4D" } ], "tamanhos": [ "38", "40", "42", "44", "46" ], "esgotados": [ "40" ], "novo": false, "maisVendido": false, "descricao": "Caimento ajustado ao corpo sem apertar, tecido durável e fácil de combinar.", "composicao": "98% algodão, 2% elastano" },
- { "id": "077", "sku": "PP-077", "slug": "tenis-runner-mesh-077", "nome": "Tênis Runner Mesh", "categoria": "tenis", "linha": "adulto", "origem": "Importado", "preco": 379.9, "precoDe": null, "cores": [
-   {"nome": "Caramelo", "hex": "#A5672F" } ], "tamanhos": [ "38", "39", "40", "41", "42", "43", "44" ], "esgotados": [ "43" ], "novo": false, "maisVendido": false, "descricao": "Palmilha macia, solado aderente e visual que combina com qualquer look.", "composicao": "Cabedal sintético, solado de borracha" },
+ { "id": "077", "sku": "PP-077", "slug": "tenis-nike-air-max-plus-077", "nome": "Tênis Nike Air Max Plus", "categoria": "tenis", "linha": "adulto", "origem": "Importado", "preco": 899.9, "precoDe": null, "cores": [
+   {"nome": "Preto e azul", "hex": "#1D2433", "fotos": [ "assets/img/produtos/tenis-air-max-plus-preto-azul.webp" ] },
+   {"nome": "Branco e prata", "hex": "#C9CDD3", "fotos": [ "assets/img/produtos/tenis-air-max-plus-branco-prata.webp" ] },
+   {"nome": "Branco", "hex": "#F7F7F5", "fotos": [ "assets/img/produtos/tenis-air-max-plus-branco.webp" ] } ], "tamanhos": [ "38", "39", "40", "41", "42", "43", "44" ], "esgotados": [], "novo": true, "maisVendido": true, "descricao": "Cabedal em tela com recortes ondulados, amortecimento Air visível no calcanhar e na frente.", "composicao": "Cabedal em tela e sintético, entressola com Air, solado de borracha" },
  { "id": "078", "sku": "PP-078", "slug": "tenis-casual-couro-078", "nome": "Tênis Casual Couro", "categoria": "tenis", "linha": "adulto", "origem": "Nacional", "preco": 409.9, "precoDe": null, "cores": [
    {"nome": "Azul-marinho", "hex": "#1F2A44" },
    {"nome": "Bege", "hex": "#D8C7A6" } ], "tamanhos": [ "38", "39", "40", "41", "42", "43", "44" ], "esgotados": [], "novo": false, "maisVendido": false, "descricao": "Palmilha macia, solado aderente e visual que combina com qualquer look.", "composicao": "Cabedal sintético, solado de borracha" },
@@ -266,9 +265,9 @@ window.PRODUTOS = [
    {"nome": "Azul-marinho", "hex": "#1F2A44" } ], "tamanhos": [ "38", "39", "40", "41", "42", "43", "44" ], "esgotados": [], "novo": true, "maisVendido": false, "descricao": "Palmilha macia, solado aderente e visual que combina com qualquer look.", "composicao": "Cabedal sintético, solado de borracha" },
  { "id": "088", "sku": "PP-088", "slug": "tenis-knit-leve-088", "nome": "Tênis Knit Leve", "categoria": "tenis", "linha": "adulto", "origem": "Importado", "preco": 409.9, "precoDe": null, "cores": [
    {"nome": "Caramelo", "hex": "#A5672F" } ], "tamanhos": [ "38", "39", "40", "41", "42", "43", "44" ], "esgotados": [], "novo": false, "maisVendido": true, "descricao": "Palmilha macia, solado aderente e visual que combina com qualquer look.", "composicao": "Cabedal sintético, solado de borracha" },
- { "id": "089", "sku": "PP-089", "slug": "bone-aba-curva-logo-089", "nome": "Boné Aba Curva Logo", "categoria": "bones", "linha": "adulto", "origem": "Importado", "preco": 79.9, "precoDe": 129.9, "cores": [
-   {"nome": "Preto", "hex": "#151515" },
-   {"nome": "Vinho", "hex": "#6B1F2A" } ], "tamanhos": [ "Único" ], "esgotados": [], "novo": true, "maisVendido": true, "descricao": "Ajuste traseiro regulável e aba estruturada que mantém o formato.", "composicao": "100% algodão" },
+ { "id": "089", "sku": "PP-089", "slug": "bone-louis-vuitton-monogram-jeans-089", "nome": "Boné Louis Vuitton Monogram Jeans", "categoria": "bones", "linha": "adulto", "origem": "Importado", "preco": 1299.9, "precoDe": null, "cores": [
+   {"nome": "Jeans claro", "hex": "#7FA3CC", "fotos": [ "assets/img/produtos/bone-lv-jeans.webp" ] },
+   {"nome": "Jeans escuro", "hex": "#2B3A55", "fotos": [ "assets/img/produtos/bone-lv-jeans.webp" ] } ], "tamanhos": [ "Único" ], "esgotados": [], "novo": true, "maisVendido": true, "descricao": "Boné em jeans com monograma bordado em relevo e ajuste traseiro em couro.", "composicao": "100% algodão (jeans), ajuste em couro" },
  { "id": "090", "sku": "PP-090", "slug": "bone-aba-reta-snapback-090", "nome": "Boné Aba Reta Snapback", "categoria": "bones", "linha": "adulto", "origem": "Importado", "preco": 119.9, "precoDe": 199.9, "cores": [
    {"nome": "Verde-militar", "hex": "#4B5320" },
    {"nome": "Vinho", "hex": "#6B1F2A" },

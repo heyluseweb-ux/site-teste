@@ -227,6 +227,9 @@ svg { fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round
 .mosaic__label { position: absolute; left: 20px; bottom: 20px; display: grid; gap: 4px; }
 .mosaic__label strong { font: 900 clamp(28px, 3vw, 46px)/.9 var(--display); text-transform: uppercase; }
 .mosaic__label span { font-size: 13.5px; color: var(--muted); }
+.mosaic__photo::after { content: ""; position: absolute; inset: auto 0 0; height: 55%; background: linear-gradient(to top, rgb(0 0 0 / .7), transparent); pointer-events: none; }
+.mosaic__photo .mosaic__label { z-index: 1; }
+.mosaic__photo .mosaic__label strong, .mosaic__photo .mosaic__label span { color: var(--white); }
 @media (max-width: 767px) { .mosaic { grid-template-columns: 1fr 1fr; grid-template-rows: none; grid-auto-rows: 170px; } .mosaic a:first-child { grid-row: span 2; grid-column: span 2; } .mosaic a:nth-child(2) { grid-column: span 2; } }
 
 /* faixa de marca */
@@ -362,6 +365,7 @@ svg { fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round
 .gallery__thumbs button[aria-current="true"] { border-color: var(--ink); }
 .gallery__thumbs .ph::after { display: none; }
 .gallery__main .ph { aspect-ratio: 4 / 5; }
+.gallery--single { grid-template-columns: 1fr; }
 .pdp__info { display: grid; gap: 22px; align-content: start; }
 .pdp__ref { font-size: 12.5px; color: var(--muted); letter-spacing: .04em; }
 .pdp__title { font-size: clamp(38px, 3.6vw, 56px); font-weight: 900; line-height: .95; }
