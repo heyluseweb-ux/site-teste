@@ -194,6 +194,10 @@ svg { fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round
 .hot__label strong { font: 900 italic clamp(30px, 3vw, 44px)/.9 var(--display); text-transform: uppercase; color: var(--ink); }
 .hot__label span { color: var(--ink); flex-shrink: 0; padding: 9px 12px; border: 1px solid var(--ink); font: 800 13px/1 var(--display); letter-spacing: .1em; text-transform: uppercase; transition: background .2s, color .2s; }
 .hot__card:hover .hot__label span { background: var(--ink); color: var(--white); }
+.hot__card--photo::after { content: ""; position: absolute; inset: auto 0 0; height: 45%; background: linear-gradient(to top, rgb(0 0 0 / .72), transparent); pointer-events: none; }
+.hot__card--photo .hot__label { z-index: 1; }
+.hot__card--photo .hot__label strong, .hot__card--photo .hot__label span { color: var(--white); border-color: var(--white); }
+.hot__card--photo:hover .hot__label span { background: var(--white); color: var(--black); }
 @media (max-width: 767px) {
   .hot { padding-top: 44px; margin-bottom: 0; padding-bottom: 32px; }
   .hot__grid { grid-template-columns: 1fr; margin-bottom: 0; gap: 12px; }

@@ -30,6 +30,8 @@ window.LOJA = {
   banners: [
     { titulo: 'Nova coleção', destaque: 'Importados e nacionais', texto: 'Camisetas, tênis e bonés que acabaram de chegar.', botao: 'Ver lançamentos', link: '#/loja/lancamentos', imagem: 'assets/img/banners/banner-novidades.webp' },
     { titulo: 'Outlet', destaque: 'Até {maxDesconto}% off', texto: 'Peças selecionadas com preço de outlet o ano todo.', botao: 'Ver ofertas', link: '#/loja/outlet', imagem: 'assets/img/banners/banner-outlet.webp' },
-    { titulo: 'Plus size', destaque: 'Do G1 ao G4', texto: 'Modelagens pensadas para quem veste plus size.', botao: 'Ver plus size', link: '#/loja/plus-size', imagem: null },
+    { titulo: 'Grifes importadas', destaque: 'Marcas internacionais', texto: 'Camisetas de grife importadas, com nota fiscal.', botao: 'Ver importados', link: '#/loja/importados', imagem: 'assets/img/banners/banner-grifes.webp' },
+    /* Banner de plus size: volte a ativar quando houver foto (imagem: 'assets/img/banners/banner-plus-size.webp').
+    { titulo: 'Plus size', destaque: 'Do G1 ao G4', texto: 'Modelagens pensadas para quem veste plus size.', botao: 'Ver plus size', link: '#/loja/plus-size', imagem: null }, */
   ],
 };
