@@ -189,7 +189,7 @@
     <section class="hot"><div class="container">
       <div class="section-head"><div><h2>Em alta</h2><p>Os mais procurados da loja nesta semana.</p></div></div>
       <div class="hot__grid">
-        ${[['camisetas', 'Camisetas', '#/loja/camisetas', 'assets/img/categorias/camisetas.webp'], ['tenis', 'Tênis', '#/loja/tenis', 'assets/img/produtos/tenis-air-max-plus-preto-azul.webp'], ['camisetas', 'Plus size', '#/loja/plus-size']].map(([g, t, h, img]) => `
+        ${[['camisetas', 'Camisetas', '#/loja/camisetas', 'assets/img/categorias/camisetas.webp'], ['tenis', 'Tênis', '#/loja/tenis', 'assets/img/categorias/tenis.webp'], ['camisetas', 'Plus size', '#/loja/plus-size']].map(([g, t, h, img]) => `
           <a class="hot__card ${img ? 'hot__card--photo' : ''}" href="${h}">${img ? `<span class="ph"><img src="${img}" alt="" loading="lazy"></span>` : ph(g, { label: '' })}<span class="hot__label"><strong>${t}</strong><span>Comprar</span></span></a>`).join('')}
       </div>
     </div></section>
