@@ -165,7 +165,7 @@
     const novos = P.filter(p => p.novo).sort(photoFirst).slice(0, 12);
     const top = P.filter(p => p.maisVendido).sort(photoFirst).slice(0, 12);
     const sale = P.filter(p => p.precoDe).sort((a, b) => off(b) - off(a)).slice(0, 12);
-    const mosaic = [['camisas-de-time', 'Camisas de time', 'Seleção e retrô'], ['moletons-e-jaquetas', 'Moletons e jaquetas', 'Para os dias frios', 'assets/img/categorias/jaquetas.webp'], ['bones', 'Bonés', 'Aba curva, reta e bucket', 'assets/img/categorias/bones.webp'], ['bermudas-e-shorts', 'Bermudas', 'Sarja, jeans e cargo']];
+    const mosaic = [['camisas-de-time', 'Camisas de time', 'Seleção e retrô', 'assets/img/categorias/camisas-de-time.webp'], ['moletons-e-jaquetas', 'Moletons e jaquetas', 'Para os dias frios', 'assets/img/categorias/jaquetas.webp'], ['bones', 'Bonés', 'Aba curva, reta e bucket', 'assets/img/categorias/bones.webp'], ['bermudas-e-shorts', 'Bermudas', 'Tactel, sarja e jeans', 'assets/img/categorias/bermudas.webp']];
     return `
     <section class="hero" aria-roledescription="carrossel" aria-label="Destaques">
       <div class="hero__slides">${banners.map((b, i) => `
