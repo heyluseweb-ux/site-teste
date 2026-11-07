@@ -1,9 +1,43 @@
-/* Catálogo da PP Outlets: 100 peças de exemplo.
+/* Catálogo da PP Outlets: peças de exemplo e peças reais com foto.
    Para trocar pelos produtos reais, edite cada item (nome, preço, cores, tamanhos) e adicione as fotos em
    "fotos": ["assets/img/produtos/PP-001-1.webp", ...]. Sem "fotos", o site mostra o espaço reservado.
    precoDe: preço antigo (riscado) quando a peça está em promoção; null quando não está.
    esgotados: tamanhos sem estoque. novo / maisVendido: aparecem nas vitrines da página inicial. */
 window.PRODUTOS = [
+ { "linha": "adulto", "origem": "Importado", "precoDe": null, "esgotados": [], "novo": true, "maisVendido": false, "id": "101", "nome": "Camisa Milan I Retrô 17/18", "categoria": "camisas-de-time", "preco": 249.9, "tamanhos": [ "P", "M", "G", "GG" ], "composicao": "100% poliéster", "descricao": "Camisa listrada vermelha e preta do Milan, temporada 17/18, com escudo e patrocínio frontal. Tecido leve com tecnologia Climacool.", "cores": [
+   {"nome": "Vermelho e preto", "hex": "#B3202A", "fotos": [ "assets/img/produtos/camisa-milan-retro-17-18.webp" ] } ], "sku": "PP-101", "slug": "camisa-milan-i-retro-17-18-101" },
+ { "linha": "adulto", "origem": "Importado", "precoDe": null, "esgotados": [], "novo": true, "maisVendido": false, "id": "102", "nome": "Camiseta Gucci Logo", "categoria": "camisetas", "preco": 189.9, "tamanhos": [ "P", "M", "G", "GG" ], "composicao": "Algodão com elastano", "descricao": "Camiseta com logo em relevo sobre o monograma GG no peito. Malha macia com elastano e gola careca.", "cores": [
+   {"nome": "Azul royal", "hex": "#2347A8", "fotos": [ "assets/img/produtos/camiseta-gucci-logo.webp" ] },
+   {"nome": "Azul-marinho", "hex": "#1F2A44", "fotos": [ "assets/img/produtos/camiseta-gucci-logo.webp" ] },
+   {"nome": "Preto", "hex": "#151515", "fotos": [ "assets/img/produtos/camiseta-gucci-logo.webp" ] },
+   {"nome": "Vermelho", "hex": "#C8202B", "fotos": [ "assets/img/produtos/camiseta-gucci-logo.webp" ] } ], "sku": "PP-102", "slug": "camiseta-gucci-logo-102" },
+ { "linha": "adulto", "origem": "Importado", "precoDe": null, "esgotados": [], "novo": true, "maisVendido": false, "id": "103", "nome": "Regata Quiksilver Logo", "categoria": "camisetas", "preco": 99.9, "tamanhos": [ "P", "M", "G", "GG" ], "composicao": "100% algodão", "descricao": "Regata com o logo Quiksilver no peito e a onda no barrado. Cava confortável para o calor e para treinar.", "cores": [
+   {"nome": "Preto", "hex": "#151515", "fotos": [ "assets/img/produtos/regata-quiksilver-logo.webp" ] },
+   {"nome": "Branco", "hex": "#F7F7F5", "fotos": [ "assets/img/produtos/regata-quiksilver-logo.webp" ] },
+   {"nome": "Azul royal", "hex": "#2347A8", "fotos": [ "assets/img/produtos/regata-quiksilver-logo.webp" ] },
+   {"nome": "Azul-turquesa", "hex": "#7FC8E0", "fotos": [ "assets/img/produtos/regata-quiksilver-logo.webp" ] },
+   {"nome": "Azul-claro", "hex": "#B5CFE3", "fotos": [ "assets/img/produtos/regata-quiksilver-logo.webp" ] },
+   {"nome": "Cinza mescla", "hex": "#C9C9C6", "fotos": [ "assets/img/produtos/regata-quiksilver-logo.webp" ] },
+   {"nome": "Vermelho", "hex": "#B3202A", "fotos": [ "assets/img/produtos/regata-quiksilver-logo.webp" ] } ], "sku": "PP-103", "slug": "regata-quiksilver-logo-103" },
+ { "linha": "adulto", "origem": "Importado", "precoDe": null, "esgotados": [], "novo": true, "maisVendido": false, "id": "104", "nome": "Calça Jeans Quiksilver Clara", "categoria": "calcas", "preco": 219.9, "tamanhos": [ "38", "40", "42", "44", "46" ], "composicao": "98% algodão, 2% elastano", "descricao": "Calça jeans lavagem clara, corte reto, com logo bordado no bolso traseiro. Cinco bolsos e botão em metal.", "cores": [
+   {"nome": "Jeans claro", "hex": "#A9C2DE", "fotos": [ "assets/img/produtos/calca-jeans-quiksilver-clara.webp" ] } ], "sku": "PP-104", "slug": "calca-jeans-quiksilver-clara-104" },
+ { "linha": "adulto", "origem": "Importado", "precoDe": null, "esgotados": [], "novo": true, "maisVendido": false, "id": "105", "nome": "Calça New Balance Tactel", "categoria": "calcas", "preco": 189.9, "tamanhos": [ "P", "M", "G", "GG" ], "composicao": "100% poliamida", "descricao": "Calça leve em tactel com cós de elástico, cordão e bolsos laterais. Boa para treino, viagem e dia a dia.", "cores": [
+   {"nome": "Preto", "hex": "#151515", "fotos": [ "assets/img/produtos/calca-new-balance-tactel.webp" ] } ], "sku": "PP-105", "slug": "calca-new-balance-tactel-105" },
+ { "linha": "adulto", "origem": "Importado", "precoDe": null, "esgotados": [], "novo": true, "maisVendido": false, "id": "106", "nome": "Polo Lacoste Piquet", "categoria": "polos", "preco": 279.9, "tamanhos": [ "P", "M", "G", "GG" ], "composicao": "100% algodão piquet", "descricao": "Polo clássica em piquet com o jacaré bordado no peito, gola firme e dois botões. Modelagem regular.", "cores": [
+   {"nome": "Preto", "hex": "#151515", "fotos": [ "assets/img/produtos/polo-lacoste-piquet.webp" ] },
+   {"nome": "Bege", "hex": "#D8C2A0", "fotos": [ "assets/img/produtos/polo-lacoste-piquet.webp" ] },
+   {"nome": "Vermelho", "hex": "#B3202A", "fotos": [ "assets/img/produtos/polo-lacoste-piquet.webp" ] },
+   {"nome": "Off-white", "hex": "#F3EFE6", "fotos": [ "assets/img/produtos/polo-lacoste-piquet.webp" ] },
+   {"nome": "Rosa", "hex": "#F2C4CE", "fotos": [ "assets/img/produtos/polo-lacoste-piquet.webp" ] },
+   {"nome": "Amarelo", "hex": "#F2D500", "fotos": [ "assets/img/produtos/polo-lacoste-piquet.webp" ] },
+   {"nome": "Azul royal", "hex": "#2B6CC4", "fotos": [ "assets/img/produtos/polo-lacoste-piquet.webp" ] },
+   {"nome": "Azul-marinho", "hex": "#1F2A44", "fotos": [ "assets/img/produtos/polo-lacoste-piquet.webp" ] },
+   {"nome": "Verde-militar", "hex": "#3F4A2A", "fotos": [ "assets/img/produtos/polo-lacoste-piquet.webp" ] } ], "sku": "PP-106", "slug": "polo-lacoste-piquet-106" },
+ { "linha": "adulto", "origem": "Importado", "precoDe": null, "esgotados": [], "novo": true, "maisVendido": false, "id": "107", "nome": "Short Lacoste Tactel", "categoria": "bermudas-e-shorts", "preco": 159.9, "tamanhos": [ "P", "M", "G", "GG" ], "composicao": "100% poliéster", "descricao": "Short em tactel com cós de elástico, cordão e jacaré bordado no mesmo tom. Seca rápido, bom para praia e piscina.", "cores": [
+   {"nome": "Azul-acinzentado", "hex": "#5A6478", "fotos": [ "assets/img/produtos/short-lacoste-tactel.webp" ] },
+   {"nome": "Azul-claro", "hex": "#A9CBEB", "fotos": [ "assets/img/produtos/short-lacoste-tactel.webp" ] },
+   {"nome": "Branco", "hex": "#F7F7F5", "fotos": [ "assets/img/produtos/short-lacoste-tactel.webp" ] },
+   {"nome": "Azul royal", "hex": "#2347A8", "fotos": [ "assets/img/produtos/short-lacoste-tactel.webp" ] } ], "sku": "PP-107", "slug": "short-lacoste-tactel-107" },
  { "id": "001", "sku": "PP-001", "slug": "camiseta-basica-algodao-001", "nome": "Camiseta Básica Algodão", "categoria": "camisetas", "linha": "adulto", "origem": "Nacional", "preco": 109.9, "precoDe": null, "cores": [
    {"nome": "Branco", "hex": "#F7F7F5" },
    {"nome": "Verde-militar", "hex": "#4B5320" } ], "tamanhos": [ "P", "M", "G", "GG" ], "esgotados": [], "novo": false, "maisVendido": false, "descricao": "Modelagem pensada para o dia a dia, malha macia e acabamento reforçado na gola.", "composicao": "100% algodão" },
