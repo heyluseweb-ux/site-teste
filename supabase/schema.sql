@@ -12,9 +12,18 @@ create table if not exists public.gestores (
   criado_em timestamptz not null default now()
 );
 
-create or replace function public.eh_gestor() returns boolean
+-- A checagem roda num esquema interno (não exposto pela API); public.eh_gestor() só repassa a pergunta.
+create schema if not exists privado;
+grant usage on schema privado to anon, authenticated;
+create or replace function privado.eh_gestor() returns boolean
 language sql stable security definer set search_path = public as $$
   select exists (select 1 from public.gestores where lower(email) = lower(coalesce(auth.jwt() ->> 'email', '')));
+$$;
+revoke all on function privado.eh_gestor() from public;
+grant execute on function privado.eh_gestor() to anon, authenticated;
+create or replace function public.eh_gestor() returns boolean
+language sql stable security invoker set search_path = public as $$
+  select privado.eh_gestor();
 $$;
 
 -- Produtos do catálogo
@@ -60,7 +69,7 @@ create index if not exists promocoes_produto_idx on public.promocoes (produto_id
 
 -- atualizado_em automático
 create or replace function public.tocar_atualizado_em() returns trigger
-language plpgsql as $$ begin new.atualizado_em = now(); return new; end $$;
+language plpgsql set search_path = public as $$ begin new.atualizado_em = now(); return new; end $$;
 drop trigger if exists produtos_atualizado on public.produtos;
 create trigger produtos_atualizado before update on public.produtos
   for each row execute function public.tocar_atualizado_em();
