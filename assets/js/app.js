@@ -1,10 +1,12 @@
 /* PP Outlets — loja virtual (HTML, CSS e JavaScript puros, sem dependências).
    Rotas por hash: #/  #/loja/<categoria>  #/busca/<termo>  #/produto/<slug>  #/favoritos
    #/checkout  #/pedido/<numero>  #/pedidos  #/pagina/<nome> */
-(() => {
+(async () => {
   'use strict';
   const L = window.LOJA;
-  const P = window.PRODUTOS;
+  const CAT = await window.PPData.loadCatalog();   // produtos com promoções já aplicadas
+  const P = CAT.produtos;
+  const ANUNCIOS = CAT.anuncios;                  // promoções marcadas para anunciar no site
   const $ = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => [...r.querySelectorAll(s)];
   const main = $('#conteudo');
@@ -20,7 +22,17 @@
   const catName = slug => (L.categorias.find(c => c.slug === slug) || {}).nome || slug;
   const bySlug = slug => P.find(p => p.slug === slug);
   const byId = id => P.find(p => p.id === id);
-  const maxOff = Math.max(...P.map(off));
+  const maxOff = Math.max(0, ...P.map(off));
+  function fimTexto(fim) {
+    if (!fim) return 'Por tempo limitado';
+    const f = new Date(fim), ms = f - new Date();
+    const dia = f.toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: '2-digit' });
+    const hora = f.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+    if (ms < 36e5) return `Termina em ${Math.max(1, Math.round(ms / 6e4))} min`;
+    if (f.toDateString() === new Date().toDateString()) return `Termina hoje às ${hora}`;
+    const d = Math.floor(ms / 864e5);
+    return `Até ${dia}${d >= 1 ? ` · faltam ${d} ${d === 1 ? 'dia' : 'dias'}` : ''}`;
+  }
   const ARROW = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
   const CHEV_L = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>';
   const CHEV_R = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>';
@@ -56,7 +68,7 @@
   const corIdx = (p, nome) => Math.max(0, p.cores.findIndex(c => c.nome === nome));
   const media = (p, i = 0, opts = {}, cor = 0) => {
     const f = photosOf(p, cor)[i];
-    return f ? `<span class="ph ${opts.cls || ''}"><img src="${esc(f)}" alt="${esc(p.nome)}${p.cores[cor] ? ' – ' + esc(p.cores[cor].nome) : ''}" loading="lazy"></span>` : ph(p.categoria, opts);
+    return f ? `<span class="ph ${opts.cls || ''}"><img src="${esc(window.PPData.foto(f))}" alt="${esc(p.nome)}${p.cores[cor] ? ' – ' + esc(p.cores[cor].nome) : ''}" loading="lazy"></span>` : ph(p.categoria, opts);
   };
   function galleryHTML(p, cor) {
     const has = photosOf(p, cor).length > 0;
@@ -136,9 +148,20 @@
     return `<nav class="crumbs" aria-label="Você está em"><a href="#/">Início</a>${items.map(([t, h]) => `<span aria-hidden="true">/</span>${h ? `<a href="${h}">${esc(t)}</a>` : `<span>${esc(t)}</span>`}`).join('')}</nav>`;
   }
 
+  function promoMedia(p) {
+    const f = photosOf(p)[0];
+    const pic = f ? `<span class="ph"><img class="hero__bg" src="${esc(window.PPData.foto(f))}" alt=""><img class="hero__fg" src="${esc(window.PPData.foto(f))}" alt="${esc(p.nome)}"></span>` : ph(p.categoria, { dark: true, label: '' });
+    return `${pic}<span class="hero__price"><s>${brl(p.precoDe)}</s><strong>${brl(p.preco)}</strong></span>`;
+  }
+
   /* ---------- página inicial ---------- */
   function viewHome() {
-    const banners = L.banners.map(b => ({ ...b, destaque: b.destaque.replace('{maxDesconto}', maxOff) }));
+    const promoSlides = ANUNCIOS.slice(0, 2).map(p => ({
+      titulo: 'Oferta', destaque: `${Math.round(p.promo.desconto)}% off`, produto: p,
+      texto: p.promo.titulo || `${p.nome} por ${brl(p.preco)}. ${fimTexto(p.promo.fim)}.`,
+      botao: 'Ver oferta', link: `#/produto/${p.slug}`,
+    }));
+    const banners = [...promoSlides, ...L.banners.map(b => ({ ...b, destaque: b.destaque.replace('{maxDesconto}', maxOff) }))];
     const novos = P.filter(p => p.novo).sort(photoFirst).slice(0, 12);
     const top = P.filter(p => p.maisVendido).sort(photoFirst).slice(0, 12);
     const sale = P.filter(p => p.precoDe).sort((a, b) => off(b) - off(a)).slice(0, 12);
@@ -153,7 +176,7 @@
             <p class="hero__text">${esc(b.texto)}</p>
             <a class="btn btn--gold" href="${b.link}" ${i ? 'tabindex="-1"' : ''}>${esc(b.botao)} ${ARROW}</a>
           </div>
-          <div class="hero__media">${b.imagem ? `<span class="ph"><img src="${esc(b.imagem)}" alt=""></span>` : ph(['camisetas', 'tenis', 'moletons-e-jaquetas'][i % 3], { dark: true, label: 'Imagem do banner' })}</div>
+          <div class="hero__media ${b.produto ? 'hero__media--produto' : ''}">${b.produto ? promoMedia(b.produto) : b.imagem ? `<span class="ph"><img src="${esc(b.imagem)}" alt=""></span>` : ph(['camisetas', 'tenis', 'moletons-e-jaquetas'][i % 3], { dark: true, label: 'Imagem do banner' })}</div>
         </div>`).join('')}
       </div>
       <div class="hero__ctrl">
@@ -322,6 +345,7 @@
           ${tags(p) ? `<div class="pdp__tags">${tags(p)}</div>` : ''}
           <div class="pdp__price">
             <div class="price ${p.precoDe ? 'price--sale' : ''}">${p.precoDe ? `<s>${brl(p.precoDe)}</s>` : ''}<strong>${brl(p.preco)}</strong></div>
+            ${p.promo ? `<p class="pdp__promo">Oferta: ${Math.round(p.promo.desconto)}% off · ${fimTexto(p.promo.fim)}</p>` : ''}
             <p class="pdp__pix"><b>${brl(pixPrice(p.preco))}</b> no Pix (${Math.round(L.descontoPix * 100)}% de desconto)</p>
             ${inst ? `<p class="pdp__inst">ou ${inst.k}x de ${brl(inst.v)} sem juros no cartão</p>` : ''}
           </div>
@@ -758,7 +782,37 @@
   $$('.mega__card-text').forEach(el => { el.textContent = `Peças com até ${maxOff}% off`; });
   $$('.mega__card .ph, [data-glyph]').forEach(el => { if (el.dataset.glyph) el.outerHTML = ph(el.dataset.glyph, { label: 'Foto', cls: 'ph--wide' }); });
 
+  /* ---------- pop-up de oferta: aparece ao abrir o site, uma vez por visita para cada promoção ---------- */
+  function showOffer() {
+    if (['checkout', 'pedido'].includes(route().name)) return;
+    let seen = []; try { seen = JSON.parse(sessionStorage.getItem('pp_ofertas_vistas') || '[]'); } catch { /* ok */ }
+    const p = ANUNCIOS.find(x => !seen.includes(x.promo.id));
+    if (!p) return;
+    try { sessionStorage.setItem('pp_ofertas_vistas', JSON.stringify([...seen, p.promo.id])); } catch { /* ok */ }
+    const f = photosOf(p)[0];
+    const dlg = document.createElement('dialog');
+    dlg.className = 'modal offer'; dlg.setAttribute('aria-labelledby', 'offer-h');
+    dlg.innerHTML = `<button class="icon-btn offer__close" type="button" aria-label="Fechar" data-close-dialog>${CLOSE}</button>
+      <a class="offer__media" href="#/produto/${p.slug}" data-offer-go>${f ? `<span class="ph"><img src="${esc(window.PPData.foto(f))}" alt="${esc(p.nome)}"></span>` : ph(p.categoria, { label: '' })}<span class="tag tag--sale">-${Math.round(p.promo.desconto)}%</span></a>
+      <div class="offer__body">
+        <p class="hero__eyebrow">Oferta por tempo limitado</p>
+        <h2 id="offer-h">${esc(p.promo.titulo || `${p.nome} com ${Math.round(p.promo.desconto)}% off`)}</h2>
+        ${p.promo.titulo ? `<p class="offer__name">${esc(p.nome)}</p>` : ''}
+        <div class="price price--sale"><s>${brl(p.precoDe)}</s><strong>${brl(p.preco)}</strong></div>
+        <p class="card__pix"><b>${brl(pixPrice(p.preco))}</b> no Pix</p>
+        <p class="offer__time">${fimTexto(p.promo.fim)}</p>
+        <a class="btn btn--block" href="#/produto/${p.slug}" data-offer-go>Ver oferta ${ARROW}</a>
+        <button class="btn btn--ghost btn--block" type="button" data-close-dialog>Agora não</button>
+        ${ANUNCIOS.length > 1 ? `<a class="link offer__more" href="#/loja/outlet" data-offer-go>Ver as ${ANUNCIOS.length} ofertas</a>` : ''}
+      </div>`;
+    document.body.appendChild(dlg);
+    dlg.addEventListener('click', e => { if (e.target === dlg || e.target.closest('[data-offer-go]')) dlg.close(); });
+    dlg.addEventListener('close', () => dlg.remove());
+    setTimeout(() => { if (document.body.contains(dlg) && !$('.drawer.is-open')) dlg.showModal(); }, 900);
+  }
+
   window.addEventListener('hashchange', () => { closeDrawer(undefined, false); render(); });
   renderCart();
   render();
+  showOffer();
 })();
