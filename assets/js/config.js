@@ -26,10 +26,10 @@ window.LOJA = {
     { slug: 'acessorios', nome: 'Acessórios' },
   ],
 
-  /* Banners da página inicial: troque "imagem" pelo arquivo da campanha (1920x720 no desktop). */
+  /* Banners da página inicial. "imagem": arquivo 2400x1200 (2:1) com o assunto no centro; as laterais são cortadas conforme a tela. */
   banners: [
-    { titulo: 'Nova coleção', destaque: 'Importados e nacionais', texto: 'Camisetas, tênis e bonés que acabaram de chegar.', botao: 'Ver lançamentos', link: '#/loja/lancamentos', imagem: null },
-    { titulo: 'Outlet', destaque: 'Até {maxDesconto}% off', texto: 'Peças selecionadas com preço de outlet o ano todo.', botao: 'Ver ofertas', link: '#/loja/outlet', imagem: null },
+    { titulo: 'Nova coleção', destaque: 'Importados e nacionais', texto: 'Camisetas, tênis e bonés que acabaram de chegar.', botao: 'Ver lançamentos', link: '#/loja/lancamentos', imagem: 'assets/img/banners/banner-novidades.webp' },
+    { titulo: 'Outlet', destaque: 'Até {maxDesconto}% off', texto: 'Peças selecionadas com preço de outlet o ano todo.', botao: 'Ver ofertas', link: '#/loja/outlet', imagem: 'assets/img/banners/banner-outlet.webp' },
     { titulo: 'Plus size', destaque: 'Do G1 ao G4', texto: 'Modelagens pensadas para quem veste plus size.', botao: 'Ver plus size', link: '#/loja/plus-size', imagem: null },
   ],
 };
