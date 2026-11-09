@@ -1,0 +1,41 @@
+# Toda semana salva uma cópia criptografada do banco e das fotos da loja (o Supabase gratuito não faz backup).
+# O arquivo fica em Actions > (execução) > Artifacts por 90 dias. Para abrir:
+#   gpg -d ppoutlets-backup-AAAA-MM-DD.tar.gz.gpg > backup.tar.gz   (pede a BACKUP_SENHA)
+name: Supabase - backup semanal
+
+on:
+  schedule:
+    - cron: '41 6 * * 0'    # domingo às 03:41 (Brasília)
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      TEM_SEGREDO: ${{ secrets.SUPABASE_DB_URL != '' && 'sim' || 'nao' }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Instalar o cliente do Postgres 17
+        if: ${{ env.TEM_SEGREDO == 'sim' }}
+        run: |
+          sudo install -d /usr/share/postgresql-common/pgdg
+          sudo curl -fsSo /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc https://www.postgresql.org/media/keys/ACCC4CF8.asc
+          echo "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc] https://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" | sudo tee /etc/apt/sources.list.d/pgdg.list
+          sudo apt-get update -qq && sudo apt-get install -y -qq postgresql-client-17
+          echo "/usr/lib/postgresql/17/bin" >> "$GITHUB_PATH"
+      - name: Gerar o backup
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+          BACKUP_SENHA: ${{ secrets.BACKUP_SENHA }}
+        run: bash .github/scripts/backup.sh backup
+      - name: Guardar o arquivo
+        uses: actions/upload-artifact@v4
+        with:
+          name: ppoutlets-backup
+          path: backup/*.gpg
+          retention-days: 90
+          if-no-files-found: ignore

@@ -12,6 +12,11 @@ window.LOJA = {
   freteGratisAcima: 299,                                 // frete grátis acima de R$ 299 (confirmar)
   cepLoja: '12200-000',                                  // CEP de referência para o cálculo do frete (confirmar)
   produtosPorPagina: 24,
+  /* Checkout de demonstração (Pix e boleto de exemplo, nada é cobrado).
+     'auto': funciona só no endereço de prévia (*.netlify.app) e no computador de quem desenvolve;
+     no domínio oficial ele se desliga sozinho, para nenhum cliente achar que pagou um pedido que não existe.
+     Quando o pagamento real for ligado, este ajuste deixa de ser usado. */
+  checkoutDemo: 'auto',
 
   categorias: [
     { slug: 'camisetas', nome: 'Camisetas' },

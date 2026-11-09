@@ -104,9 +104,52 @@ grant select on public.produtos, public.promocoes to anon;
 grant select, insert, update, delete on public.produtos, public.promocoes to authenticated;
 grant select on public.gestores to authenticated;
 
--- Fotos: bucket público "produtos" (qualquer um vê; só gestores enviam e apagam).
-insert into storage.buckets (id, name, public) values ('produtos', 'produtos', true)
-  on conflict (id) do update set public = true;
+-- Travas de formato: campos que o site usa em endereços, atributos e cores só aceitam caracteres seguros.
+-- Mesmo que a senha de um gestor vaze, quem entrar no painel não consegue injetar código na vitrine.
+create or replace function privado.cores_validas(c jsonb) returns boolean
+language sql immutable set search_path = '' as $$
+  select case when jsonb_typeof(c) <> 'array' then false else not exists (
+    select 1 from jsonb_array_elements(c) e
+    where case
+      when jsonb_typeof(e) <> 'object' then true
+      when coalesce(e ->> 'hex', '') !~ '^#[0-9a-fA-F]{6}$' then true
+      when length(coalesce(e ->> 'nome', '')) not between 1 and 40 then true
+      when not (e ? 'fotos') then false
+      when jsonb_typeof(e -> 'fotos') <> 'array' then true
+      else exists (
+        select 1 from jsonb_array_elements(e -> 'fotos') f
+        where jsonb_typeof(f) <> 'string'
+           or (f #>> '{}') !~ '^(https://[a-z0-9]+\.supabase\.co/storage/v1/object/public/produtos/|assets/img/)[A-Za-z0-9._~/-]+$')
+    end) end;
+$$;
+create or replace function privado.tamanhos_validos(t text[]) returns boolean
+language sql immutable set search_path = '' as $$
+  select not exists (select 1 from unnest(t) x where x is null or length(x) not between 1 and 12 or x ~ '[<>"''`&\\]');
+$$;
+
+alter table public.produtos drop constraint if exists produtos_id_formato;
+alter table public.produtos add constraint produtos_id_formato check (id ~ '^[A-Za-z0-9-]{1,64}$');
+alter table public.produtos drop constraint if exists produtos_slug_formato;
+alter table public.produtos add constraint produtos_slug_formato check (slug ~ '^[a-z0-9]+(-[a-z0-9]+)*$' and length(slug) <= 120);
+alter table public.produtos drop constraint if exists produtos_sku_formato;
+alter table public.produtos add constraint produtos_sku_formato check (sku is null or sku ~ '^[A-Za-z0-9._-]{1,40}$');
+alter table public.produtos drop constraint if exists produtos_categoria_formato;
+alter table public.produtos add constraint produtos_categoria_formato check (categoria ~ '^[a-z0-9-]{1,40}$');
+alter table public.produtos drop constraint if exists produtos_cores_formato;
+alter table public.produtos add constraint produtos_cores_formato check (privado.cores_validas(cores));
+alter table public.produtos drop constraint if exists produtos_tamanhos_formato;
+alter table public.produtos add constraint produtos_tamanhos_formato check (privado.tamanhos_validos(tamanhos));
+alter table public.produtos drop constraint if exists produtos_estoque_formato;
+alter table public.produtos add constraint produtos_estoque_formato check (jsonb_typeof(estoque) = 'object');
+alter table public.produtos drop constraint if exists produtos_textos_tamanho;
+alter table public.produtos add constraint produtos_textos_tamanho check (length(nome) <= 120 and length(descricao) <= 4000 and length(composicao) <= 300);
+alter table public.promocoes drop constraint if exists promocoes_titulo_tamanho;
+alter table public.promocoes add constraint promocoes_titulo_tamanho check (titulo is null or length(titulo) <= 120);
+
+-- Fotos: bucket público "produtos" (qualquer um vê; só gestores enviam e apagam), só imagens de até 5 MB.
+insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+  values ('produtos', 'produtos', true, 5242880, array['image/webp', 'image/jpeg', 'image/png'])
+  on conflict (id) do update set public = true, file_size_limit = excluded.file_size_limit, allowed_mime_types = excluded.allowed_mime_types;
 drop policy if exists "fotos publicas" on storage.objects;
 create policy "fotos publicas" on storage.objects for select to public using (bucket_id = 'produtos');
 drop policy if exists "gestor envia fotos" on storage.objects;

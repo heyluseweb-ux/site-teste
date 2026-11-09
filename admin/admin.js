@@ -143,7 +143,7 @@
         <a class="btn btn--gold" href="#/produto/novo">${I.plus}Novo produto</a></div>
       <div class="toolbar">
         <label class="sr-only" for="f-q">Buscar</label><input class="input" id="f-q" type="search" placeholder="Buscar por nome ou referência" value="${esc(LF.q)}" data-lf="q">
-        <label class="sr-only" for="f-cat">Categoria</label><select class="input" id="f-cat" data-lf="cat"><option value="">Todas as categorias</option>${L.categorias.map(c => `<option value="${c.slug}" ${LF.cat === c.slug ? 'selected' : ''}>${c.nome}</option>`).join('')}</select>
+        <label class="sr-only" for="f-cat">Categoria</label><select class="input" id="f-cat" data-lf="cat"><option value="">Todas as categorias</option>${L.categorias.map(c => `<option value="${esc(c.slug)}" ${LF.cat === c.slug ? 'selected' : ''}>${c.nome}</option>`).join('')}</select>
       </div>
       <div class="chips" data-chips></div>
       <div class="panel" data-lista></div>`);
@@ -155,7 +155,7 @@
       todos: () => true, ativos: p => p.ativo !== false, escondidos: p => p.ativo === false,
       esgotados: p => estoqueTotal(p) === 0, promocao: p => !!promoDe(p.id),
     };
-    const base = produtos.filter(p => (!q || `${p.nome} ${p.sku}`.toLowerCase().includes(q)) && (!LF.cat || p.categoria === LF.cat));
+    const base = produtos.filter(p => (!q || `${p.nome} ${esc(p.sku)}`.toLowerCase().includes(q)) && (!LF.cat || p.categoria === LF.cat));
     const nomes = { todos: 'Todos', ativos: 'Na loja', escondidos: 'Escondidos', esgotados: 'Esgotados', promocao: 'Em promoção' };
     $('[data-chips]').innerHTML = Object.keys(st).map(k => `<button class="chip" type="button" data-status="${k}" aria-pressed="${LF.status === k}">${nomes[k]}<span>${base.filter(st[k]).length}</span></button>`).join('');
     const lista = base.filter(st[LF.status]);
@@ -206,7 +206,7 @@
           <section class="card"><h2>Informações</h2>
             <label class="field" data-err="nome"><span>Nome do produto</span><input data-f="nome" value="${esc(ED.nome)}" placeholder="Ex.: Camiseta Oversized Essential" maxlength="90"></label>
             <div class="grid3">
-              <label class="field"><span>Categoria</span><select data-f="categoria">${L.categorias.map(c => `<option value="${c.slug}" ${ED.categoria === c.slug ? 'selected' : ''}>${c.nome}</option>`).join('')}</select></label>
+              <label class="field"><span>Categoria</span><select data-f="categoria">${L.categorias.map(c => `<option value="${esc(c.slug)}" ${ED.categoria === c.slug ? 'selected' : ''}>${c.nome}</option>`).join('')}</select></label>
               <label class="field"><span>Linha</span><select data-f="linha"><option value="adulto" ${ED.linha === 'adulto' ? 'selected' : ''}>Adulto</option><option value="plus-size" ${ED.linha === 'plus-size' ? 'selected' : ''}>Plus size</option></select></label>
               <label class="field"><span>Origem</span><select data-f="origem"><option ${ED.origem === 'Nacional' ? 'selected' : ''}>Nacional</option><option ${ED.origem === 'Importado' ? 'selected' : ''}>Importado</option></select></label>
             </div>
@@ -416,7 +416,7 @@
   }
   function renderPicker(q) {
     const s = q.trim().toLowerCase();
-    const lista = produtos.filter(p => !s || `${p.nome} ${p.sku}`.toLowerCase().includes(s)).sort((a, b) => (b.id === PR.produtoId) - (a.id === PR.produtoId)).slice(0, 60);
+    const lista = produtos.filter(p => !s || `${p.nome} ${esc(p.sku)}`.toLowerCase().includes(s)).sort((a, b) => (b.id === PR.produtoId) - (a.id === PR.produtoId)).slice(0, 60);
     $('[data-plist]').innerHTML = lista.map(p => `<button type="button" role="option" data-pick="${esc(p.id)}" aria-pressed="${p.id === PR.produtoId}" aria-selected="${p.id === PR.produtoId}">${thumb(p)}<span>${esc(p.nome)}<small>${esc(p.sku || '')} · ${brl(p.preco)}${p.ativo === false ? ' · escondido' : ''}</small></span></button>`).join('') || '<p class="muted" style="padding:10px">Nenhum produto com esse nome.</p>';
   }
   function syncFinal() {

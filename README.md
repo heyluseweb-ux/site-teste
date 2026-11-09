@@ -76,6 +76,28 @@ Se o banco ficar fora do ar, a loja usa o catálogo de `assets/js/products.js` p
 
 **Peças com foto real hoje:** Camiseta Oversized Essential (branco e café), Polo Nike Piquet, Tênis Nike Air Max Plus (3 cores), Calça Chino Zara, Boné Louis Vuitton Monogram Jeans e Jaqueta Nike Corta-Vento. Os preços dessas peças são sugestões a confirmar.
 
+## Segurança
+
+O que já está ligado:
+
+- **Banco com regras de acesso (RLS):** visitante só lê produtos e promoções ativos; só os e-mails da tabela `gestores` alteram.
+- **Travas de formato no banco:** endereço do produto, referência (SKU), categoria, cores, fotos e tamanhos só aceitam caracteres seguros. Mesmo com a senha de um gestor vazada, ninguém injeta código na vitrine.
+- **Fotos:** só JPG, PNG ou WebP de até 5 MB, enviadas apenas por gestores.
+- **Cabeçalhos de segurança** (arquivo `_headers`, aplicado pelo Netlify): lista do que o site pode carregar (CSP), bloqueio contra abrir a loja dentro de outro site, HTTPS obrigatório e painel fora do Google.
+  Ao ligar um serviço novo (Mercado Pago, Melhor Envio, Google Analytics), o endereço dele precisa entrar no `Content-Security-Policy` do `_headers`.
+- **Checkout de demonstração só na prévia:** em `*.netlify.app` ele funciona; no domínio oficial se desliga sozinho e mostra "Pagamento online em ativação" (ajuste `checkoutDemo` em `assets/js/config.js`).
+- **Supabase ativo:** a rotina `.github/workflows/supabase-manter-ativo.yml` consulta o banco todo dia, para o plano gratuito não pausar. Se o banco não responder, o GitHub avisa por e-mail.
+- **Backup semanal:** `.github/workflows/supabase-backup.yml` salva banco e fotos, criptografados, em Actions › Artifacts (guardados por 90 dias). Para ligar, crie em GitHub › Settings › Secrets and variables › Actions:
+  - `SUPABASE_DB_URL`: no Supabase, botão **Connect** › **Session pooler** (troque `[YOUR-PASSWORD]` pela senha do banco).
+  - `BACKUP_SENHA`: uma senha longa, guardada também fora do GitHub. Sem ela não dá para abrir o backup.
+  - Para abrir: `gpg -d ppoutlets-backup-AAAA-MM-DD.tar.gz.gpg > backup.tar.gz`.
+
+O que cada responsável precisa configurar (não dá para fazer pelo código):
+
+- Verificação em duas etapas (2FA) em GitHub, Netlify, Supabase, Registro.br, Mercado Pago e Melhor Envio.
+- Supabase › Authentication › Providers › Email: desligar **Allow new users to sign up**.
+- Supabase › Authentication › Policies: senha mínima de 12 caracteres, com letras, números e símbolos.
+
 ## Antes de vender de verdade
 
 Este protótipo **não cobra**: o checkout grava o pedido só no navegador e mostra um aviso de demonstração. Para vender:

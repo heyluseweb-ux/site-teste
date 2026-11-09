@@ -1,0 +1,17 @@
+# Cabeçalhos de segurança aplicados pelo Netlify a todas as páginas.
+# Content-Security-Policy: lista de onde o site pode carregar scripts, fotos, fontes e dados.
+#   Ao ligar um serviço novo (ex.: Mercado Pago, Melhor Envio, Google Analytics), o endereço dele
+#   precisa entrar aqui, senão o navegador bloqueia.
+/*
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://hapywgozqrubjiaoaxuy.supabase.co; connect-src 'self' https://hapywgozqrubjiaoaxuy.supabase.co wss://hapywgozqrubjiaoaxuy.supabase.co https://viacep.com.br; frame-src 'none'; frame-ancestors 'none'; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), usb=()
+  Strict-Transport-Security: max-age=31536000
+  Cross-Origin-Opener-Policy: same-origin
+
+# Painel do gestor: nunca aparece no Google e nunca fica guardado em cache.
+/admin/*
+  X-Robots-Tag: noindex, nofollow
+  Cache-Control: no-store

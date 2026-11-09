@@ -23,6 +23,9 @@
   const bySlug = slug => P.find(p => p.slug === slug);
   const byId = id => P.find(p => p.id === id);
   const maxOff = Math.max(0, ...P.map(off));
+  const DEMO_CHECKOUT = (L.checkoutDemo ?? 'auto') === 'auto'
+    ? location.protocol === 'file:' || /(^|\.)netlify\.app$|^localhost$|^127\.0\.0\.1$/.test(location.hostname)
+    : !!L.checkoutDemo;
   function fimTexto(fim) {
     if (!fim) return 'Por tempo limitado';
     const f = new Date(fim), ms = f - new Date();
@@ -119,19 +122,19 @@
     return t.join('');
   }
   function card(p) {
-    const link = `#/produto/${p.slug}`;
+    const link = `#/produto/${esc(p.slug)}`;
     const nome = `${p.nome} – ${p.cores[0].nome}`;
     const quick = p.tamanhos.length > 1
-      ? `<div class="quick"><p>Compra rápida</p><div class="quick__sizes">${p.tamanhos.map(t => `<button type="button" data-quick="${p.id}" data-size="${esc(t)}" ${p.esgotados.includes(t) ? 'disabled aria-label="' + esc(t) + ' esgotado"' : ''}>${esc(t)}</button>`).join('')}</div></div>`
-      : `<div class="quick"><button class="btn btn--sm btn--block" type="button" data-quick="${p.id}" data-size="${esc(p.tamanhos[0])}">Adicionar ao carrinho</button></div>`;
+      ? `<div class="quick"><p>Compra rápida</p><div class="quick__sizes">${p.tamanhos.map(t => `<button type="button" data-quick="${esc(p.id)}" data-size="${esc(t)}" ${p.esgotados.includes(t) ? 'disabled aria-label="' + esc(t) + ' esgotado"' : ''}>${esc(t)}</button>`).join('')}</div></div>`
+      : `<div class="quick"><button class="btn btn--sm btn--block" type="button" data-quick="${esc(p.id)}" data-size="${esc(p.tamanhos[0])}">Adicionar ao carrinho</button></div>`;
     return `<article class="card">
       <a class="card__media" href="${link}" aria-label="${esc(nome)}"><span class="card__tags">${tags(p)}</span>${media(p)}</a>
-      <button class="fav" type="button" data-fav data-id="${p.id}" aria-pressed="${favs.has(p.id)}" aria-label="Favoritar ${esc(p.nome)}">${HEART}</button>
+      <button class="fav" type="button" data-fav data-id="${esc(p.id)}" aria-pressed="${favs.has(p.id)}" aria-label="Favoritar ${esc(p.nome)}">${HEART}</button>
       ${quick}
       <div class="card__body">
         <a class="card__name" href="${link}">${esc(nome)}</a>
         ${priceBlock(p)}
-        ${p.cores.length > 1 ? `<div class="swatches" aria-label="Cores: ${esc(p.cores.map(c => c.nome).join(', '))}">${p.cores.map(c => `<span class="swatch" style="background:${c.hex}" title="${esc(c.nome)}"></span>`).join('')}</div>` : ''}
+        ${p.cores.length > 1 ? `<div class="swatches" aria-label="Cores: ${esc(p.cores.map(c => c.nome).join(', '))}">${p.cores.map(c => `<span class="swatch" style="background:${esc(c.hex)}" title="${esc(c.nome)}"></span>`).join('')}</div>` : ''}
       </div>
     </article>`;
   }
@@ -159,7 +162,7 @@
     const promoSlides = ANUNCIOS.slice(0, 2).map(p => ({
       titulo: 'Oferta', destaque: `${Math.round(p.promo.desconto)}% off`, produto: p,
       texto: p.promo.titulo || `${p.nome} por ${brl(p.preco)}. ${fimTexto(p.promo.fim)}.`,
-      botao: 'Ver oferta', link: `#/produto/${p.slug}`,
+      botao: 'Ver oferta', link: `#/produto/${esc(p.slug)}`,
     }));
     const banners = [...promoSlides, ...L.banners.map(b => ({ ...b, destaque: b.destaque.replace('{maxDesconto}', maxOff) }))];
     const novos = P.filter(p => p.novo).sort(photoFirst).slice(0, 12);
@@ -263,9 +266,9 @@
         <aside class="filters" id="filtros" aria-label="Filtros">
           <div class="filters__head"><h2>Filtrar</h2><button class="icon-btn" type="button" data-filters-close aria-label="Fechar filtros">${CLOSE}</button></div>
           <form data-filters>
-            ${cats.length > 1 ? `<details class="fgroup" open><summary>Categoria</summary><div class="fgroup__body">${cats.map(c => `<label class="check"><input type="checkbox" name="cats" value="${c.slug}"> ${c.nome}<small>${count(p => p.categoria === c.slug)}</small></label>`).join('')}</div></details>` : ''}
+            ${cats.length > 1 ? `<details class="fgroup" open><summary>Categoria</summary><div class="fgroup__body">${cats.map(c => `<label class="check"><input type="checkbox" name="cats" value="${esc(c.slug)}"> ${c.nome}<small>${count(p => p.categoria === c.slug)}</small></label>`).join('')}</div></details>` : ''}
             <details class="fgroup" open><summary>Tamanho</summary><div class="fgroup__body"><div class="sizes-grid">${sizes.map(s => `<label class="size-opt"><input type="checkbox" name="sizes" value="${esc(s)}"><span>${esc(s)}</span></label>`).join('')}</div></div></details>
-            <details class="fgroup" open><summary>Cor</summary><div class="fgroup__body"><div class="colors-grid">${colors.map(c => `<label class="color-opt" title="${esc(c.nome)}"><input type="checkbox" name="colors" value="${esc(c.nome)}" aria-label="${esc(c.nome)}"><span style="background:${c.hex}"></span></label>`).join('')}</div></div></details>
+            <details class="fgroup" open><summary>Cor</summary><div class="fgroup__body"><div class="colors-grid">${colors.map(c => `<label class="color-opt" title="${esc(c.nome)}"><input type="checkbox" name="colors" value="${esc(c.nome)}" aria-label="${esc(c.nome)}"><span style="background:${esc(c.hex)}"></span></label>`).join('')}</div></div></details>
             <details class="fgroup" open><summary>Preço</summary><div class="fgroup__body"><div class="price-range"><label><span class="sr-only">Preço mínimo</span><input type="number" name="min" inputmode="numeric" min="0" placeholder="De R$"></label><label><span class="sr-only">Preço máximo</span><input type="number" name="max" inputmode="numeric" min="0" placeholder="Até R$"></label></div>
               <label class="check"><input type="checkbox" name="promo"> Só promoções<small>${count(p => p.precoDe)}</small></label></div></details>
             <details class="fgroup"><summary>Linha</summary><div class="fgroup__body"><label class="check"><input type="checkbox" name="linha" value="adulto"> Adulto<small>${count(p => p.linha === 'adulto')}</small></label><label class="check"><input type="checkbox" name="linha" value="plus-size"> Plus size<small>${count(p => p.linha === 'plus-size')}</small></label></div></details>
@@ -334,13 +337,13 @@
     PD = { p, cor: 0, tam: single ? p.tamanhos[0] : null, qtd: 1, foto: 0 };
     const inst = installments(p.preco);
     const related = P.filter(x => x.categoria === p.categoria && x.id !== p.id).slice(0, 10);
-    const catLink = COLLECTIONS[p.categoria] ? null : `#/loja/${p.categoria}`;
+    const catLink = COLLECTIONS[p.categoria] ? null : `#/loja/${esc(p.categoria)}`;
     return `<div class="container">
       ${crumbs([[catName(p.categoria), catLink], [p.nome]])}
       <div class="pdp">
         <div class="gallery ${photosOf(p, 0).length === 1 ? 'gallery--single' : ''}" data-gallery>${galleryHTML(p, 0)}</div>
         <div class="pdp__info">
-          <div><p class="pdp__ref">Ref. ${p.sku} · ${p.origem}</p></div>
+          <div><p class="pdp__ref">Ref. ${esc(p.sku)} · ${p.origem}</p></div>
           <h1 class="pdp__title">${esc(p.nome)}</h1>
           ${tags(p) ? `<div class="pdp__tags">${tags(p)}</div>` : ''}
           <div class="pdp__price">
@@ -350,7 +353,7 @@
             ${inst ? `<p class="pdp__inst">ou ${inst.k}x de ${brl(inst.v)} sem juros no cartão</p>` : ''}
           </div>
           <div><p class="opt-label"><span>Cor: <b data-color-name>${esc(p.cores[0].nome)}</b></span></p>
-            <div class="opt-colors">${p.cores.map((c, i) => `<button type="button" data-color="${i}" style="background:${c.hex}" aria-label="${esc(c.nome)}" aria-pressed="${i === 0}"></button>`).join('')}</div></div>
+            <div class="opt-colors">${p.cores.map((c, i) => `<button type="button" data-color="${i}" style="background:${esc(c.hex)}" aria-label="${esc(c.nome)}" aria-pressed="${i === 0}"></button>`).join('')}</div></div>
           <div><p class="opt-label"><span>Tamanho${single ? '' : ': <b data-size-name>escolha um</b>'}</span>${single ? '' : '<button class="link" type="button" data-open-medidas>Guia de medidas</button>'}</p>
             <div class="opt-sizes">${p.tamanhos.map(t => `<button type="button" data-size="${esc(t)}" aria-pressed="${single}" ${p.esgotados.includes(t) ? `disabled aria-label="${esc(t)} esgotado"` : ''}>${esc(t)}</button>`).join('')}</div>
             <p class="opt-error" data-size-error hidden>Escolha um tamanho para continuar.</p></div>
@@ -366,7 +369,7 @@
           </div>
           <div class="accordion">
             <details open><summary>Descrição</summary><div class="acc__body"><p>${esc(p.descricao)}</p></div></details>
-            <details><summary>Detalhes</summary><div class="acc__body"><dl class="specs"><dt>Composição</dt><dd>${esc(p.composicao)}</dd><dt>Origem</dt><dd>${p.origem}</dd><dt>Linha</dt><dd>${p.linha === 'plus-size' ? 'Plus size' : 'Adulto'}</dd><dt>Tamanhos</dt><dd>${p.tamanhos.join(', ')}</dd><dt>Referência</dt><dd>${p.sku}</dd></dl></div></details>
+            <details><summary>Detalhes</summary><div class="acc__body"><dl class="specs"><dt>Composição</dt><dd>${esc(p.composicao)}</dd><dt>Origem</dt><dd>${p.origem}</dd><dt>Linha</dt><dd>${p.linha === 'plus-size' ? 'Plus size' : 'Adulto'}</dd><dt>Tamanhos</dt><dd>${p.tamanhos.join(', ')}</dd><dt>Referência</dt><dd>${esc(p.sku)}</dd></dl></div></details>
             <details><summary>Trocas e devoluções</summary><div class="acc__body"><p>Você tem 7 dias após o recebimento para desistir da compra e até 30 dias para trocar de tamanho. <a class="link" href="#/pagina/trocas">Ver a política completa</a></p></div></details>
           </div>
         </div>
@@ -410,9 +413,9 @@
     const falta = L.freteGratisAcima - sub;
     body.innerHTML = cart.map(i => { const p = byId(i.id); return `
       <div class="line-item">
-        <a href="#/produto/${p.slug}" data-close>${media(p, 0, { label: '' }, corIdx(p, i.cor))}</a>
+        <a href="#/produto/${esc(p.slug)}" data-close>${media(p, 0, { label: '' }, corIdx(p, i.cor))}</a>
         <div>
-          <div class="line-item__top"><div><a class="line-item__name" href="#/produto/${p.slug}" data-close>${esc(p.nome)}</a><p class="line-item__meta">${esc(i.cor)} · Tam. ${esc(i.tam)}</p></div>
+          <div class="line-item__top"><div><a class="line-item__name" href="#/produto/${esc(p.slug)}" data-close>${esc(p.nome)}</a><p class="line-item__meta">${esc(i.cor)} · Tam. ${esc(i.tam)}</p></div>
             <button class="line-item__remove" type="button" data-remove="${esc(i.key)}" aria-label="Remover ${esc(p.nome)}">${TRASH}</button></div>
           <div class="line-item__bottom"><div class="qty qty--sm"><button type="button" data-line-qty="-1" data-key="${esc(i.key)}" aria-label="Diminuir">−</button><input value="${i.qtd}" readonly aria-label="Quantidade"><button type="button" data-line-qty="1" data-key="${esc(i.key)}" aria-label="Aumentar">+</button></div>
             <span class="line-item__price">${brl(p.preco * i.qtd)}</span></div>
@@ -433,7 +436,9 @@
     const inst = Array.from({ length: L.parcelasSemJuros }, (_, i) => i + 1);
     return `<div class="co-header"><div class="container"><a class="logo" href="#/"><span class="logo__mark" aria-hidden="true">PP</span><span class="logo__name">Outlets</span></a><span class="co-secure"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>Compra 100% segura</span></div></div>
     <div class="container">
-      <p class="demo-note"><b>Versão de demonstração.</b> O pagamento ainda não está conectado a uma operadora: nenhum valor é cobrado e nenhum dado é enviado.</p>
+      ${DEMO_CHECKOUT
+        ? '<p class="demo-note"><b>Versão de demonstração.</b> O pagamento ainda não está conectado a uma operadora: nenhum valor é cobrado e nenhum dado é enviado.</p>'
+        : `<p class="demo-note" role="alert" data-pay-off><b>Pagamento online em ativação.</b> Ainda não é possível finalizar compras pelo site. Para comprar agora, fale com a gente pelo direct do Instagram <a class="link" href="${esc(L.instagram)}" target="_blank" rel="noopener">${esc(L.instagramUsuario)}</a> ou visite a loja em ${esc(L.cidade)}.</p>`}
       <form class="checkout" data-checkout novalidate>
         <div class="co-steps">
           <section class="co-step"><div class="co-step__head"><span class="co-step__num">1</span><h2>Seus dados</h2></div>
@@ -474,7 +479,7 @@
           <h2>Resumo do pedido</h2>
           <div class="summary__items">${cart.map(i => { const p = byId(i.id); return `<div class="summary__item">${media(p, 0, { label: '' }, corIdx(p, i.cor))}<span>${esc(p.nome)}<small>${esc(i.cor)} · Tam. ${esc(i.tam)} · ${i.qtd} un.</small></span><b>${brl(p.preco * i.qtd)}</b></div>`; }).join('')}</div>
           <div class="totals" data-co-totals></div>
-          <button class="btn btn--gold btn--block" type="submit">Finalizar pedido ${ARROW}</button>
+          <button class="btn btn--gold btn--block" type="submit" ${DEMO_CHECKOUT ? '' : 'disabled aria-disabled="true"'}>${DEMO_CHECKOUT ? `Finalizar pedido ${ARROW}` : 'Pagamento online em breve'}</button>
           <p class="field__hint">Ao finalizar, você concorda com a <a class="link" href="#/pagina/privacidade">política de privacidade</a> e as <a class="link" href="#/pagina/trocas">regras de troca</a>.</p>
         </aside>
       </form>
@@ -521,6 +526,7 @@
   const validCPF = v => { const c = v.replace(/\D/g, ''); if (c.length !== 11 || /^(\d)\1+$/.test(c)) return false; for (const t of [9, 10]) { let s = 0; for (let i = 0; i < t; i++) s += +c[i] * (t + 1 - i); if (((s * 10) % 11) % 10 !== +c[t]) return false; } return true; };
   const luhn = v => { const d = v.replace(/\D/g, ''); if (d.length < 13) return false; let s = 0; for (let i = 0; i < d.length; i++) { let n = +d[d.length - 1 - i]; if (i % 2) { n *= 2; if (n > 9) n -= 9; } s += n; } return s % 10 === 0; };
   function submitCheckout(form) {
+    if (!DEMO_CHECKOUT) { $('[data-pay-off]')?.scrollIntoView({ behavior: 'smooth', block: 'center' }); return; }   // sem pagamento real, nada de pedido falso
     $$('.field', form).forEach(f => { f.classList.remove('is-invalid'); f.querySelector('.field__error')?.remove(); });
     const err = (name, msg) => { const i = form.elements[name]; const f = i.closest('.field'); f.classList.add('is-invalid'); f.insertAdjacentHTML('beforeend', `<span class="field__error">${msg}</span>`); return i; };
     const v = n => (form.elements[n]?.value || '').trim();
@@ -737,7 +743,7 @@
     const q = norm(searchInput.value).trim();
     if (q.length < 2) { suggest.hidden = true; return; }
     const hits = P.filter(p => norm(`${p.nome} ${catName(p.categoria)}`).includes(q));
-    suggest.innerHTML = hits.length ? hits.slice(0, 5).map(p => `<a href="#/produto/${p.slug}">${media(p, 0, { label: '' })}<span>${esc(p.nome)}<small>${brl(p.preco)}</small></span></a>`).join('') + `<a class="search__all" href="#/busca/${encodeURIComponent(searchInput.value.trim())}">Ver os ${hits.length} resultados</a>`
+    suggest.innerHTML = hits.length ? hits.slice(0, 5).map(p => `<a href="#/produto/${esc(p.slug)}">${media(p, 0, { label: '' })}<span>${esc(p.nome)}<small>${brl(p.preco)}</small></span></a>`).join('') + `<a class="search__all" href="#/busca/${encodeURIComponent(searchInput.value.trim())}">Ver os ${hits.length} resultados</a>`
       : `<p style="padding:14px">Nenhum produto para “${esc(searchInput.value)}”.</p>`;
     suggest.hidden = false;
   }
@@ -831,7 +837,7 @@
     const dlg = document.createElement('dialog');
     dlg.className = 'modal offer'; dlg.setAttribute('aria-labelledby', 'offer-h');
     dlg.innerHTML = `<button class="icon-btn offer__close" type="button" aria-label="Fechar" data-close-dialog>${CLOSE}</button>
-      <a class="offer__media" href="#/produto/${p.slug}" data-offer-go>${f ? `<span class="ph"><img src="${esc(window.PPData.foto(f))}" alt="${esc(p.nome)}"></span>` : ph(p.categoria, { label: '' })}<span class="tag tag--sale">-${Math.round(p.promo.desconto)}%</span></a>
+      <a class="offer__media" href="#/produto/${esc(p.slug)}" data-offer-go>${f ? `<span class="ph"><img src="${esc(window.PPData.foto(f))}" alt="${esc(p.nome)}"></span>` : ph(p.categoria, { label: '' })}<span class="tag tag--sale">-${Math.round(p.promo.desconto)}%</span></a>
       <div class="offer__body">
         <p class="hero__eyebrow">Oferta por tempo limitado</p>
         <h2 id="offer-h">${esc(p.promo.titulo || `${p.nome} com ${Math.round(p.promo.desconto)}% off`)}</h2>
@@ -839,7 +845,7 @@
         <div class="price price--sale"><s>${brl(p.precoDe)}</s><strong>${brl(p.preco)}</strong></div>
         <p class="card__pix"><b>${brl(pixPrice(p.preco))}</b> no Pix</p>
         <p class="offer__time">${fimTexto(p.promo.fim)}</p>
-        <a class="btn btn--block" href="#/produto/${p.slug}" data-offer-go>Ver oferta ${ARROW}</a>
+        <a class="btn btn--block" href="#/produto/${esc(p.slug)}" data-offer-go>Ver oferta ${ARROW}</a>
         <button class="btn btn--ghost btn--block" type="button" data-close-dialog>Agora não</button>
         ${ANUNCIOS.length > 1 ? `<a class="link offer__more" href="#/loja/outlet" data-offer-go>Ver as ${ANUNCIOS.length} ofertas</a>` : ''}
       </div>`;

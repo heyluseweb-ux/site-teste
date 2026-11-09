@@ -1,0 +1,27 @@
+# Todo dia faz uma consulta ao banco para o Supabase gratuito não pausar a loja.
+# Se o banco não responder, a execução falha e o GitHub avisa por e-mail.
+name: Supabase - manter ativo
+
+on:
+  schedule:
+    - cron: '23 11 * * *'   # todo dia às 08:23 (Brasília)
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: write
+
+jobs:
+  manter-ativo:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Consultar o banco
+        run: bash .github/scripts/manter-ativo.sh
+      - name: Manter esta rotina ligada
+        # Em repositório público o GitHub desliga rotinas agendadas após 60 dias sem commits; isto renova o prazo.
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh api -X PUT "repos/${{ github.repository }}/actions/workflows/supabase-manter-ativo.yml/enable"

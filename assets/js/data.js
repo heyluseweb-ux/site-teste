@@ -84,6 +84,13 @@
     if (/row-level security|permission denied/i.test(m)) return 'Seu usuário não tem permissão para alterar a loja. Peça para incluir seu e-mail na lista de gestores.';
     if (/duplicate key.*slug/i.test(m)) return 'Já existe um produto com esse endereço. Mude um pouco o nome.';
     if (/duplicate key.*sku/i.test(m)) return 'Já existe um produto com essa referência (SKU).';
+    if (/produtos_sku_formato/.test(m)) return 'A referência (SKU) aceita só letras sem acento, números, ponto, hífen e sublinhado, sem espaços.';
+    if (/produtos_cores_formato/.test(m)) return 'Confira as cores: cada uma precisa de nome (até 40 letras) e de uma amostra de cor válida.';
+    if (/produtos_tamanhos_formato/.test(m)) return 'Confira os tamanhos: cada um com até 12 caracteres, sem os símbolos < > " \' ` &.';
+    if (/produtos_textos_tamanho|promocoes_titulo_tamanho/.test(m)) return 'Texto longo demais: nome e título até 120 caracteres, descrição até 4.000.';
+    if (/produtos_(slug|id|categoria)_formato/.test(m)) return 'O nome ou a categoria gerou um endereço inválido. Use letras e números no nome do produto.';
+    if (/mime type|invalid_mime_type/i.test(m)) return 'Esse arquivo não é aceito. Envie a foto em JPG, PNG ou WebP.';
+    if (/maximum allowed size|Payload too large|entity too large/i.test(m)) return 'Foto grande demais: o limite é 5 MB.';
     if (/Failed to fetch|NetworkError/i.test(m)) return 'Sem conexão com o banco. Confira a internet e tente de novo.';
     return m;
   }
@@ -138,7 +145,7 @@
     },
     async saveProduto(p) {
       const novo = !p.id;
-      if (!p.slug || novo) p.slug = `${slugify(p.nome)}-${Math.random().toString(36).slice(2, 6)}`;
+      if (!p.slug || novo) p.slug = `${slugify(p.nome) || 'produto'}-${Math.random().toString(36).slice(2, 6)}`;
       if (!ONLINE) {
         const db = demoDB();
         if (novo) { p.id = demoId(); p.ordem = Math.max(0, ...db.produtos.map(x => x.ordem || 0)) + 1; db.produtos.push(p); }
@@ -176,7 +183,7 @@
     async uploadFoto(blob, produtoRef) {
       if (!ONLINE) return await new Promise((ok, fail) => { const fr = new FileReader(); fr.onload = () => ok(fr.result); fr.onerror = fail; fr.readAsDataURL(blob); });
       const ext = blob.type === 'image/webp' ? 'webp' : 'jpg';
-      const path = `${slugify(produtoRef || 'produto')}/${Date.now()}-${Math.random().toString(36).slice(2, 7)}.${ext}`;
+      const path = `${slugify(produtoRef || '') || 'produto'}/${Date.now()}-${Math.random().toString(36).slice(2, 7)}.${ext}`;
       check(await client().storage.from('produtos').upload(path, blob, { contentType: blob.type || 'image/jpeg', upsert: false }));
       return client().storage.from('produtos').getPublicUrl(path).data.publicUrl;
     },
